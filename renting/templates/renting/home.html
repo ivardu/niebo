@@ -1,0 +1,56 @@
+{% extends 'users/base.html' %}
+{% block body %}
+<div>
+	<div class="columns">
+		<div class="column">
+			<!-- <div class=""> -->
+				<form id='rental-search' class="" method="post" action="{% url 'renting:disp' %}">
+					{% csrf_token %}
+					<div class="columns is-centered">
+	  					<div id='geocoder' class="column is-one-third pd-geo"></div>
+	  					<div class="column">
+	  						<div class="columns">
+			  					<div class="column">
+			  						<input type="date" id='datepickerDemoRange' class='input dd has-background-white-bis'>
+			  					</div>
+			  					<div class="column">
+			  						<input type="date" allowSameDayRange='false' class='dd has-background-white-bis' displayMode="inline"  isRange='true'>
+			  					</div>
+			  					<div class="column">
+			  						<input id='rt-srch' class="button is-danger is-rounded" type="submit" name="Search" value="Search">
+			  					</div>
+		  					</div>
+	  					</div>
+  					</div>
+  				</form>
+  			<!-- </div> -->
+		</div>
+	</div>
+	<!-- <div id='map' style='width: 400px; height: 300px;'></div> -->
+	<!-- <div id="geocoder" class="geocoder"></div> -->
+	<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYm80c2E5NjFnemcycXM0YXE3cTZmaWwifQ.RUzXxKHAH_vuUSs0hc4t7g';
+	// var map = new mapboxgl.Map({
+	// container: 'map',
+	// style: 'mapbox://styles/mapbox/streets-v11',
+	// center:[-79.4512, 43.6568],
+	// zoom:13
+	// });
+	var geocoder = new MapboxGeocoder({
+		accessToken:mapboxgl.accessToken,
+		mapboxgl:mapboxgl
+	})
+	// document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+	geocoder.addTo('#geocoder');
+	$(function(){
+		$('.mapboxgl-ctrl-geocoder--input').attr('name','place');	
+		console.log($('mapboxgl-ctrl-geocoder--input'));
+	});
+	
+
+
+	
+</script>
+
+</div>
+{% endblock body %}

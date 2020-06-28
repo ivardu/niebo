@@ -1,0 +1,39 @@
+{% extends 'users/base.html' %}
+{% block body %}
+<div>
+	<!-- {{place}} -->
+	<div id='map' style='width: 400px; height: 300px;'></div>
+	<span id='cord'>{{cord}}</span>
+	<script>
+	// console.log(cord);
+	$(function(){
+		var cord = document.getElementById('cord').innerHTML;
+		// console.log(cord);
+		mapboxgl.accessToken = 'pk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYm80c2E5NjFnemcycXM0YXE3cTZmaWwifQ.RUzXxKHAH_vuUSs0hc4t7g';
+		var map = new mapboxgl.Map({
+		container: 'map',
+		style: 'mapbox://styles/mapbox/streets-v11',
+		center:[76.49, 11.83],
+		zoom:10
+		});
+		// var geocoder = new MapboxGeocoder({
+		// 	accessToken:mapboxgl.accessToken,
+		// 	mapboxgl:mapboxgl
+		// })
+		// document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+		// geocoder.addTo('#geocoder');
+
+		map.on('load', function(){
+		// console.log(cord);
+		var lnglt = cord.split(',')
+		var lng = parseFloat(lnglt[0]);
+		var lt = parseFloat(lnglt[1]);
+		map.jumpTo({center:[lng, lt]});
+		});
+	});
+
+	
+	
+</script>
+</div>
+{% endblock %}

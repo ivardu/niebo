@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'renting.apps.RentingConfig',
+    'users.apps.UsersConfig',
+    # # 'django.contrib.humanize',
+    # 'django.contrib.admindocs',
 ]
 
 MIDDLEWARE = [
@@ -118,3 +122,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# niebo-maps = 'sk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYnA2bzh3ejI5Z3MzMHBqZXNubDdoaHUifQ.hRI-JRI_OPLQooK0rIQVyQ'

@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Niebo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+   	<!-- MapBox GL - CSS -->
+	<link href='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css' rel='stylesheet' />
+	<link
+	rel="stylesheet"
+	href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
+	type="text/css"
+	/>
+	<!-- Bulma-CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+	<!-- Bulma-Calendar CSS -->
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bulma-calendar.min.css' %}">
+	<!-- Custom CSS -->
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+	<script type="text/javascript" src="{% static 'js/bulma-calendar.min.js' %}"></script>
+	<script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
+	<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+<body>
+	<section class="hero is-fullheight">
+
+		<div class="hero-head">
+			<nav class="navbar" role="navigation" aria-label="main navigation">
+			  <div class="navbar-brand nb-lg">
+			    <a class="navbar-item" href="">
+			      <img src="{% static '/img/niebo-logo.png' %}" width="112" height="112">
+			    </a>
+			    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+			      <span aria-hidden="true"></span>
+			      <span aria-hidden="true"></span>
+			      <span aria-hidden="true"></span>
+			    </a>
+			  </div>
+
+			  <div id="navbarBasicExample" class="navbar-menu">
+			    <div class="navbar-start">
+		<!-- 	      <a class="navbar-item">
+			        Home
+			      </a>
+
+			      <a class="navbar-item">
+			        Documentation
+			      </a> -->
+
+		<!-- 	      <div class="navbar-item has-dropdown is-hoverable">
+			        <a class="navbar-link">
+			          More
+			        </a>
+
+			        <div class="navbar-dropdown">
+			          <a class="navbar-item">
+			            About
+			          </a>
+			          <a class="navbar-item">
+			            Jobs
+			          </a>
+			          <a class="navbar-item">
+			            Contact
+			          </a>
+			          <hr class="navbar-divider">
+			          <a class="navbar-item">
+			            Report an issue
+			          </a>
+			        </div>
+			      </div> -->
+			    </div>
+
+			    <div class="navbar-end nb-end">
+			      <div class="navbar-item">
+			        <div class="buttons">
+			          <a class="button is-primary">
+			            <strong>Sign up</strong>
+			          </a>
+			          <a class="button is-light">
+			            Log in
+			          </a>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			</nav>
+		</div>
+
+
+		<div class="hero-body has-background-grey-lighter">
+			<div class="container">
+				{% block body %}
+
+				{% endblock %}
+			</div>
+		</div>
+		<div class="hero-foot">
+			
+		</div>
+	</section>
+			<script type="text/javascript">
+			// Initialize all input of date type.
+// 			const calendars = bulmaCalendar.attach('[type="date"]', {dateFormat:'YYYY/MM/DD'});
+// // startDate: new Date('10/24/2020')
+// 			// Loop on each calendar initialized
+// 			calendars.forEach(calendar => {
+// 				// Add listener to date:selected event
+// 				calendar.on('date:selected', date => {
+// 					console.log(date);
+// 				});
+// 			});
+
+// 			// To access to bulmaCalendar instance of an element
+// 			const element = document.querySelector('#dd');
+// 			if (element) {
+// 				// bulmaCalendar instance is available as element.bulmaCalendar
+// 				element.bulmaCalendar.on('select', datepicker => {
+// 					// console.log(datepicker.data.value());
+// 					element.value = datepicker.data.value();
+// 				});
+// 			}
+			// Initialize all input of date type.
+			const calendars = bulmaCalendar.attach('[type="date"]', {
+				'minDate': new Date(new Date().getFullYear(), new Date().getMonth(),1),
+				'maxDate':new Date(new Date().getFullYear(),11,31),
+				'enableYearSwitch':false,
+				'startDate': new function(){
+					return new Date()
+				},
+				'disabledDates': new function(){
+					var list = [];
+					var today = new Date()
+					var startDate = new Date(today.getFullYear(), today.getMonth(),1)
+					var endDate = new Date(today.getFullYear(), today.getMonth(),today.getDate())
+					while(startDate < endDate){
+						// console.log(startDate, endDate)
+						var relDate = new Date(startDate)
+						list.push(relDate);
+						startDate.setDate(startDate.getDate()+1)
+					} 
+					return list
+					
+				},
+				'displayMode':'default',
+				// 'isRange':true,
+				'allowSameDayRange':false
+
+			});
+
+			// Loop on each calendar initialized
+			calendars.forEach(calendar => {
+				// Add listener to date:selected event
+				calendar.on('date:selected', date => {
+					console.log(date);
+				});
+			});
+
+			// To access to bulmaCalendar instance of an element
+			const element = document.querySelector('.dd');
+			// console.log(element, 'noelement');
+			if (element) {
+				// bulmaCalendar instance is available as element.bulmaCalendar
+				// console.log(element.);
+
+				element.bulmaCalendar.on('select', datepicker => {
+					console.log(datepicker.isStartDate);
+					// console.log(datepicker.data.value());
+				});
+			}
+
+			$(function(){
+			$(".datetimepicker-dummy-input").click(function() {
+				// console.log($('.datetimepicker-dummy-input'));
+			    $('html,body').animate({
+			        scrollTop: $(".hero-foot").offset().top},
+			        'slow');
+			    // datetimepicker-footer-cancel
+			});
+			$('.datetimepicker-clear-button').on('click', function(event) {
+				// body...
+				event.preventDefault();
+			});
+			$('#rental-search').on('submit', function(event){
+				var res = false
+				$('.datetimepicker-dummy-input').each(function(){
+					res = res || $(this).val() == '';
+					// console.log($(this).val())
+				})
+				// console.log(res);
+				if($('.mapboxgl-ctrl-geocoder--input').val() == '' || res == true){
+					// console.log('here..!!');
+				event.preventDefault();	
+				}
+			});
+		});
+		</script>
+</body>
+</html>
