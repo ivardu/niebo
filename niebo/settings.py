@@ -125,3 +125,4 @@ STATIC_URL = '/static/'
 
 
 # niebo-maps = 'sk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYnA2bzh3ejI5Z3MzMHBqZXNubDdoaHUifQ.hRI-JRI_OPLQooK0rIQVyQ'
+

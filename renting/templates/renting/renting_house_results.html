@@ -2,7 +2,7 @@
 {% block body %}
 <div>
 	<!-- {{place}} -->
-	<div id='map' style='width: 400px; height: 300px;'></div>
+	<div id='map' style='width: 600px; height: 500px;'></div>
 	<span id='cord'>{{cord}}</span>
 	<script>
 	// console.log(cord);
@@ -13,9 +13,13 @@
 		var map = new mapboxgl.Map({
 		container: 'map',
 		style: 'mapbox://styles/mapbox/streets-v11',
-		center:[76.49, 11.83],
-		zoom:10
+		// center:[76.49, 11.83],
+		center:[20.977185,52.234062],
+		zoom:15
 		});
+
+		// http://maps.google.com/?q=Nowoursynowska+145A%2CWarsaw
+
 		// var geocoder = new MapboxGeocoder({
 		// 	accessToken:mapboxgl.accessToken,
 		// 	mapboxgl:mapboxgl
@@ -30,10 +34,7 @@
 		var lt = parseFloat(lnglt[1]);
 		map.jumpTo({center:[lng, lt]});
 		});
-	});
-
-	
-	
+	});	
 </script>
 </div>
 {% endblock %}
