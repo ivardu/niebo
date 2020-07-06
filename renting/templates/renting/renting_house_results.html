@@ -15,7 +15,7 @@
 		style: 'mapbox://styles/mapbox/streets-v11',
 		// center:[76.49, 11.83],
 		center:[20.977185,52.234062],
-		zoom:15
+		zoom:10
 		});
 
 		// http://maps.google.com/?q=Nowoursynowska+145A%2CWarsaw
@@ -32,7 +32,7 @@
 		var lnglt = cord.split(',')
 		var lng = parseFloat(lnglt[0]);
 		var lt = parseFloat(lnglt[1]);
-		map.jumpTo({center:[lng, lt]});
+		map.jumpTo({center:[lng, lt],zoom:18});
 		});
 	});	
 </script>

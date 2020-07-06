@@ -1,0 +1,372 @@
+{% extends 'users/base.html' %}
+{% block body %}
+<div class="columns has-background-white-bis box">
+	<h1 class="title is-5 mx-2 my-2 px-2 py-2">Welcome House owner..!! you are one step away to post your rent ad</h1>
+	 <!-- <h6>Search the Location and pin the marker, fill the form..!!</h6> -->
+</div>
+<div class="columns box mt-1">
+	<div class="column has-background-white">
+		<div class="columns">
+			<div class="column">
+				<h6 class="title is-4">Fill your house address</h6>
+			</div>
+		</div>
+		<form method="post">
+			{% csrf_token %}
+			<div class="columns">
+				<div class="column">
+					{{form.house_no.label}}
+					{{form.house_no}}
+					
+				</div>
+				<div class="column">
+					{{form.street_address.label}}
+					{{form.street_address}}
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column">
+					{{form.area.label}}
+					{{form.area}}
+				</div>
+				<div class="column">
+					{{form.city.label}}
+					{{form.city}}
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column field">
+					{{form.state.label}}
+					<div class="control">
+						<div class="select">
+							{{form.state}}
+						</div>
+					</div>
+				</div>
+				<div class="column">
+					{{form.zipcode.label}}
+					{{form.zipcode}}
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column">
+					{{form.country.label}}
+					{{form.country}}
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column">
+					{{form.longitude.label}}
+					{{form.longitude}}
+				</div>
+				<div class="column">
+					{{form.latitude.label}}
+					{{form.latitude}}
+				</div>
+			</div>
+			<div class="columns">
+
+			</div>
+		</form>
+	</div>
+	<div class="column ">
+		<div class="columns is-centered">
+			<div class="column is-two-thirds has-background-white-ter">
+				<div id='geocoder' class="geocoder"></div>
+			</div>
+		</div>
+		<progress class="progress is-danger" max="100">80%</progress>
+		<div id='map' style='width: 40vw; height: 60vh;'></div>
+	</div>
+</div>
+<div class="columns">
+	<div class="column box is-half mt-1 mb-1 cv-cls">
+		<h6 class="title is-4">House Has</h6>
+		<form method="post">
+			{% csrf_token %}
+			<!-- First row HouseHas -->
+			<div class="columns is-half">
+				<div class="column field">
+					{{hform.kitchen.label}}
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.kitchen}}
+						</div>
+					</div>
+				</div>
+				<div class="column">
+					{{hform.bedroom.label}}
+					{{hform.bedroom}}
+				</div>
+				<div class="column field">
+					{{hform.terrace.label}}
+					<div class="control">
+						<div class="select is-fullwidth is-small">
+							{{hform.terrace}}
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+
+			<!-- second row HouseHas -->
+			<div class="columns">
+				<div class="column field">
+					{{hform.bathroom.label}}
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.bathroom}}
+						</div>
+					</div>
+				</div>
+
+				<div class="column field">
+					{{hform.balcony.label}}
+					<div class="control">
+						<div class="select is-fullwidth is-small">
+							{{hform.balcony}}
+						</div>
+					</div>
+				</div>
+
+				<div class="column field">
+					{{hform.basement.label}}
+					<div class="control">
+						<div class="select is-fullwidth is-small">
+							{{hform.basement}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Third row HouseHas -->
+			<div class="columns">
+				<div class="column field">
+					{{hform.toilet.label}}
+					<div class="control">
+						<div class="select is-small">
+							{{hform.toilet}}
+						</div>
+					</div>
+				</div>
+				<div class="column field ">
+					{{hform.parking.label}}
+					<div class="control">
+						<div class="select is-fullwidth is-small">
+							{{hform.parking}}
+						</div>
+					</div>
+				</div>
+
+				<div class="column field">
+					{{hform.garden.label}}
+					<div class="control">
+						<div class="select is-fullwidth is-small">
+							{{hform.garden}}
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!-- Fourth row HouseHas -->
+			<div class="columns">
+				<div class="column is-4 field">
+					{{hform.living_room.label}}
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.living_room}}
+						</div>
+					</div>
+				</div>
+				<div class="column field is-4">
+					<!-- <div class="field-label is-small"> -->
+						<!-- <label class="is-small" id="{{hform.wheelchair_accessible.label}}"-->{{hform.wheelchair_accessible.label}}
+						<!-- </label> -->
+					<!-- </div> -->
+					<div class="control">
+						<div class="select is-fullwidth is-small">
+							{{hform.wheelchair_accessible}}
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</form>
+	</div>
+	<div class="column is-half box ml-1 mt-1 cc-cls">
+		<h6 class="title is-4">Amenities</h6>
+		<form>
+			{% csrf_token %}
+			
+			<div class="columns is-multiline">
+				{% for field in aform %}
+<!-- 					{% for class in field.label_classes %}
+						{{class}}
+					{% endfor %} -->
+				<div class="column is-4 field">
+					<label class="{% for class in field.label_classes %}{{class}}{% endfor %}">{{field.label}}</label>
+					<div class="control">
+						<div class="select is-fullwidth is-small">
+							{{field}}
+						</div>
+					</div>
+				</div>	
+				{% endfor %}			
+			</div>
+		</form>
+	</div>
+</div>
+<div class="columns">
+	<div class="column is-half box mb-1 cv-cls">
+		<h6 class="title is-4">Rules</h6>
+		<form>
+			{% csrf_token %}
+			
+			<div class="columns is-multiline">
+				{% for field in rform %}
+<!-- 					{% for class in field.label_classes %}
+						{{class}}
+					{% endfor %} -->
+				<div class="column is-4 field">
+					<label class="{% for class in field.label_classes %}{{class}}{% endfor %}">{{field.label}}</label>
+					<div class="control">
+						<div class="select is-fullwidth is-small">
+							{{field}}
+						</div>
+					</div>
+				</div>	
+				{% endfor %}			
+			</div>
+		</form>
+	</div>
+	<!-- Preferred Tenant -->
+	<div class="column is-half box ml-1 cc-cls">
+		<h6 class="title is-4">Preferred Tenant</h6>
+		<form>
+			{% csrf_token %}
+			
+			<div class="columns is-multiline">
+				{% for field in ptform %}
+<!-- 					{% for class in field.label_classes %}
+						{{class}}
+					{% endfor %} -->
+				<div class="column is-4 field">
+					<label class="{% for class in field.label_classes %}{{class}}{% endfor %}">{{field.label}}</label>
+					<div class="control">
+						<div class="select is-fullwidth is-small">
+							{{field}}
+						</div>
+					</div>
+				</div>	
+				{% endfor %}			
+			</div>
+		</form>
+	</div>
+	
+</div>
+<!-- Submit or Cancel -->
+<div class="columns is-centered box mt-1">
+	<div class="column is-one-quarter">
+		<input class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
+	</div>
+	<div class="column is-one-quarter">
+		<a class="button is-fullwidth is-small is-rounded is-danger" href="">Cancel</a>
+	</div>
+</div>
+<style type="text/css">
+	.geocoder {
+/*position: absolute;*/
+z-index: 1;
+/*width: 95%;*/
+/*left: 50%;*/
+/*margin-left: -25%;*/
+top: 10px;
+}
+.mapboxgl-ctrl-geocoder {
+min-width: 100%;
+}
+#map {
+margin-top: 1rem;
+}
+</style>
+<script type="text/javascript">
+	$(function(){
+	mapboxgl.accessToken = 
+		'pk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYm80c2E5NjFnemcycXM0YXE3cTZmaWwifQ.RUzXxKHAH_vuUSs0hc4t7g';
+	var map = new mapboxgl.Map({
+		container: 'map',
+		style: 'mapbox://styles/mapbox/streets-v11',
+		center: [20.977185,52.234062],
+		zoom: 10,
+
+	});
+
+	var geocoder = new MapboxGeocoder({
+		accessToken:mapboxgl.accessToken,
+		mapboxgl:mapboxgl,
+		marker:false
+	})
+	// Adding the geocoder result to the map
+	document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+	
+	//Creating Global marker used in map's load and click events
+ 	var marker = new mapboxgl.Marker({
+				draggable:true,
+				color:'red',
+			});	
+
+ 	// Re-position the marker on new geocoder result
+ 	geocoder.on('result', function(ev) {
+ 		lnglt = ev.result.geometry.coordinates
+		 marker.setLngLat(lnglt).addTo(map);
+		 // console.log(lnglt[1],lnglt[2]);
+		 lngLatChange(lnglt[0],lnglt[1]);
+	});
+
+ 	// On Map Load, create a maker and add it to the Map
+ 	map.on('load',function(e){
+		cord = geocoder.options.proximity;
+		lt = [cord.longitude, cord.latitude];
+		marker.setLngLat(lt).addTo(map);
+		// $('#id_longitude').attr('value',cord.longitude);
+		// $('#id_latitude').attr('value',cord.latitude);
+		lngLatChange(cord.longitude, cord.latitude);
+		$('.progress').remove();
+ 	});
+
+ 	marker.on('dragend', onDragEnd);
+ 	// On Map click, re-position the marker the clicked position
+	map.on('click', function(e){
+
+		marker.setLngLat(e.lngLat).addTo(map);
+
+		//Add co-ordinates details to the marker top on marker-drag 
+		onDragEnd();
+ 		
+		// marker.on('dragend', onDragEnd);
+	});
+
+	function onDragEnd() {
+			var lngLat = marker.getLngLat();
+			var div = $('#pp-disp');
+			if(div.length > 0){
+				$(div).remove();
+			}
+			var disp = document.createElement("div");
+			var el = $('.mapboxgl-marker');
+			disp.setAttribute('id','pp-disp');
+			
+			disp.innerHTML = 'Longitude: ' + (lngLat.lng).toFixed(2) + '<br />Latitude: ' + lngLat.lat.toFixed(2);
+			el.prepend(disp);
+			console.log($('#id_longitude'));
+			lngLatChange(lngLat.lng, lngLat.lat);
+
+	}
+	function lngLatChange(longitude, latitude){
+		$('#id_longitude').attr('value',longitude.toFixed(2));
+		$('#id_latitude').attr('value',latitude.toFixed(2));
+	}
+});
+</script>
+
+{% endblock body %}

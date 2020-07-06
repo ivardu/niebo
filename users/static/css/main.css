@@ -5,7 +5,7 @@
 	margin-right: 9rem;
 }
 .navbar-item img {
-    max-height: 9rem;
+    max-height: 5rem;
 }
 
 .mapboxgl-ctrl-geocoder, .mapboxgl-ctrl-geocoder--input{
@@ -33,4 +33,35 @@
 .datetimepicker-dummy, .datetimepicker-dummy-wrapper, .datetimepicker-dummy-input{
 	min-width: 100%;
 	background: white;
+}
+
+#pp-disp{
+	background-color: #fff;
+	padding: 1rem;
+	box-shadow: 0px 1px 10px #ddd, 0 1px 20px #ccc; 
+}
+
+::-ms-input-placeholder{
+	opacity: 1;
+	color: #000;
+} 
+::-webkit-input-placeholder{
+		opacity: 1;
+	color: #000;
+} 
+::-moz-placeholder {
+	opacity: 1;
+	color: #000;
+}
+
+input::placeholder{
+	color: #000;
+}
+
+.cc-cls{
+	margin-bottom: 0.2rem; 
+}
+
+.cv-cls{
+	margin-right: -0.1rem;
 }
