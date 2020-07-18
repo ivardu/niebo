@@ -1,0 +1,88 @@
+<div class="columns">
+	<div class="column is-half box mb-1 cv-cls" id='rules'>
+		<div class="level">
+			<div class="level-left">
+				<h6 class="title is-4" id='rul-titl'>Rules<span class="button is-small is-danger">2</span></h6>
+			</div>
+			<div class="level-right">
+				<button id='rl-e' class='level-item button is-small is-secondary'>Edit</button>
+				<button id='rl-sa' type='submit' class="button is-small is-primary">Save</button>
+			</div>
+		</div>
+		<form method='post' id='rules_form'>
+			{% csrf_token %}		
+			<div class="columns is-multiline is-centered">
+				{% for field in rform %}
+				<div class="column is-4 field">
+					<label class="label is-small" for="{{field.id_for_label}}">{{field.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{field}}
+						</div>
+					</div>
+				</div>	
+				{% endfor %}			
+			</div>
+			<div class="columns is-centered" id='rules_button'>
+				<div class="column is-one-quarter">
+					<input id='rl_has_submit' class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
+				</div>
+				<div class="column is-one-quarter">
+					<button class="button is-fullwidth is-small is-rounded is-danger del-tmp">Delete</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- Preferred Tenant -->
+	<div class="column is-half box ml-1 cc-cls" id='preferred_tenenat'>
+		
+		<div class="level">
+			<div class="level-left">
+				<h6 class="title is-4" id='pt-titl'>Preferred Tenant <span class="button is-small is-primary">1</span></h6>
+			</div>
+			<div class="level-right">
+				<button id='pt-e' class='level-item button is-small is-secondary'>Edit</button>
+				<button id='pt-sa' type='submit' class="button is-small is-primary">Save</button>
+			</div>
+		</div>
+		<form method="post" id='pt_form'>
+			{% csrf_token %}
+			
+			<div class="columns is-multiline">
+				{% for field in ptform %}
+				<div class="column is-4 field">
+					<label class="label is-small" for="{{field.id_for_label}}">{{field.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{field}}
+						</div>
+					</div>
+				</div>	
+				{% endfor %}			
+			</div>
+			<div class="columns is-centered" id='pt_button'>
+				<div class="column is-one-quarter">
+					<input id='pt_has_submit' class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
+				</div>
+				<div class="column is-one-quarter">
+					<button class="button is-fullwidth is-small is-rounded is-danger del-tmp">Delete</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<!-- Submit or Cancel -->
+
+<div id="final_sec" class="columns is-centered is-multiline box mt-1">
+	<div class="columns pt-2">
+		<h6 class="subtitle is-6">
+			You have sucessfully updated the data, if you have any corrections in individual forms click on respective edit, if you need to edit whole or delete this click on Edit or delete buttons below 
+		</h6>
+	</div>
+	<div class="column is-one-quarter">
+		<a id="ed_btn" href="" class="button is-fullwidth is-small is-rounded is-success">I'm OK</a>
+	</div>
+	<div class="column is-one-quarter">
+		<button id="dl_btn" class="button is-fullwidth is-small is-rounded is-danger">Delete</button>
+	</div>
+</div>

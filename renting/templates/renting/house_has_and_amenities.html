@@ -1,0 +1,179 @@
+<div class="columns" id="second_div">
+	<div class="column box is-half mt-1 mb-1 cv-cls" id='house_has'>
+		<div class="level">
+			 <div class="leve-left">
+				<h6 class="title is-4" id='hh_btn_tit'>House Has <span class="button is-small is-danger">4</span></h6>
+			 </div>
+			 <div class="level-right">
+				<button id='hh-e' class='level-item button is-small is-secondary'>Edit</button>
+				<button id='hh-sa' type='submit' class="button is-small is-primary">Save</button>
+			</div>
+		</div>
+		<form id='house_has_form' method="post" data-url="">
+			{% csrf_token %}
+			<!-- First row HouseHas -->
+			<div class="columns is-half">
+				<div class="column field">
+					<label class="label is-small" for="{{hform.kitchen.id_for_label}}">
+					{{hform.kitchen.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.kitchen}}
+						</div>
+					</div>
+				</div>
+				<div class="column">
+					<label class="label is-small" for="{{hform.bedroom.id_for_label}}">
+					{{hform.bedroom.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.bedroom}}
+						</div>
+					</div>
+				</div>
+				<div class="column field">
+					<label class="label is-small" for="{{hform.terrace.id_for_label}}">
+					{{hform.terrace.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.terrace}}
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+
+			<!-- second row HouseHas -->
+			<div class="columns">
+				<div class="column field">
+					<label class="label is-small" for="{{hform.bathroom.id_for_label}}">
+					{{hform.bathroom.label}}</label>
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.bathroom}}
+						</div>
+					</div>
+				</div>
+
+				<div class="column field">
+					<label class="label is-small" for="{{hform.balcony.id_for_label}}">
+					{{hform.balcony.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.balcony}}
+						</div>
+					</div>
+				</div>
+
+				<div class="column field">
+					<label class="label is-small" for="{{hform.basement.id_for_label}}">
+					{{hform.basement.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.basement}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Third row HouseHas -->
+			<div class="columns">
+				<div class="column field">
+					<label class="label is-small" for="{{hform.toilet.id_for_label}}">
+					{{hform.toilet.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.toilet}}
+						</div>
+					</div>
+				</div>
+				<div class="column field ">
+					<label class="label is-small" for="{{hform.parking.id_for_label}}">
+					{{hform.parking.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.parking}}
+						</div>
+					</div>
+				</div>
+
+				<div class="column field">
+					<label class="label is-small" for="{{hform.garden.id_for_label}}">
+					{{hform.garden.label}}</label>
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.garden}}
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!-- Fourth row HouseHas -->
+			<div class="columns">
+				<div class="column is-4 field">
+					<label class="label is-small" for="{{hform.living_room.id_for_label}}">{{hform.living_room.label}}</label>
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.living_room}}
+						</div>
+					</div>
+				</div>
+				<div class="column field is-4">
+					<label class="label is-small" for="{{hform.wheelchair_accessible.id_for_label}}">
+						{{hform.wheelchair_accessible.label}}
+					</label>
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.wheelchair_accessible}}
+						</div>
+					</div>
+				</div>
+				
+			</div>
+
+			<div id="h_has_btn" class="columns box is-centered">
+				<div class="column is-one-third">
+					<input id="house_has_submit" type="submit" name="submit" value="submit" class="button is-fullwidth  is-small is-rounded is-success">
+				</div>
+				<div class="column is-one-third">
+					<button class="button is-fullwidth is-small is-rounded is-danger del-tmp">Delete</button>
+				</div>	
+			</div>
+
+		</form>
+	</div>
+	<div class="column is-half box ml-1 mt-1 cc-cls" id='amenities'>	
+		<div class="level">
+			<div class="level-left">
+				<h6 class="title is-4" id='amen-tit-id'>Amenities <span class="button is-small is-danger">3</span></h6>	
+			</div>
+			<div class="level-right">
+				<button id='am-e' class='level-item button is-small is-secondary'>Edit</button>
+				<button id='am-sa' type='submit' class="button is-small is-primary">Save</button>
+			</div>
+		</div>
+		<form id='amenities_form' method="post">
+			{% csrf_token %}
+			<div class="columns is-multiline is-centered">
+				{% for field in aform %}
+				<div class="column is-4 field">
+					<label class="label is-small" for="{{field.id_for_label}}">{{field.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{field}}
+						</div>
+					</div>
+				</div>	
+				{% endfor %}			
+			</div>
+			<div class="columns is-centered" id='a_as_btn'>
+				<div class="column is-one-third">
+					<input id="am_as_submit" type="submit" name="submit" value="submit" class="button is-fullwidth  is-small is-rounded is-success">
+				</div>
+				<div class="column is-one-third">
+					<button class="button is-fullwidth is-small is-rounded is-danger del-tmp">Delete</button>
+				</div>	
+			</div>
+		</form>
+	</div>
+</div>

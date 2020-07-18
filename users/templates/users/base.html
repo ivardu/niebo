@@ -18,6 +18,8 @@
 	<!-- Custom CSS -->
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
 	<script type="text/javascript" src="{% static 'js/bulma-calendar.min.js' %}"></script>
 	<script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
 	<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
@@ -94,7 +96,7 @@
 
 
 		<div class="hero-body has-background-grey-lighter">
-			<div class="container">
+			<div class="container" id='bdy-ma'>
 				{% block body %}
 
 				{% endblock %}
@@ -200,5 +202,6 @@
 			});
 		});
 		</script>
+		<script type="text/javascript" src="{% static 'js/rental_post.js' %}"></script>
 </body>
 </html>

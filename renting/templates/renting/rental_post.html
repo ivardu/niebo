@@ -1,71 +1,116 @@
 {% extends 'users/base.html' %}
 {% block body %}
+<div class="modal">
+	<div class="modal-background"></div>
+	<div class="modal-content" id='mc-id'>
+    <!-- Any other Bulma elements you want -->
+	    <div class="box">
+	    	<div class="modal-card-body">
+			    <div class="columns is-centered">
+			    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Are you sure, you want to delete this <span class="has-text-weight-medium">Rent Ad..?</span></h6>
+			    </div>
+			    <div class="columns is-centered">
+					<div class="column is-one-quarter">
+						<button id="md-cncl" class="button is-small is-fullwidth is-warning">Cancel</button>
+					</div>
+					<div class="column is-one-quarter">
+						<a href="" id="md-del" class="button is-small is-fullwidth is-danger">Yes</a>
+					</div>
+				</div>
+			</div>
+    	</div>
+	</div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
 <div class="columns has-background-white-bis box">
-	<h1 class="title is-5 mx-2 my-2 px-2 py-2">Welcome House owner..!! you are one step away to post your rent ad</h1>
+	<h1 class="title is-5 mx-2 my-2 px-2 py-2">Welcome House owner..!! you are few steps away to post your rent ad</h1>
 	 <!-- <h6>Search the Location and pin the marker, fill the form..!!</h6> -->
 </div>
 <div class="columns box mt-1">
-	<div class="column has-background-white">
-		<div class="columns">
-			<div class="column">
-				<h6 class="title is-4">Fill your house address</h6>
+	<div class="column has-background-white mn-col" id='pkhere'>
+		<div class="level">
+			<div class="level-left">
+				<h6 class="title is-4" id='ha_title_id'>Fill your house address <span class="button is-small is-danger">5</span></h6>
+			</div>
+			<div class="level-right">
+				<button id='ha-e' class='level-item button is-small is-secondary'>Edit</button>
+				<button id='ha-sa' type='submit' class="button is-small is-primary">Save</button>
 			</div>
 		</div>
-		<form method="post">
+		<form method="post" id="house_addr" action="{% url 'renting:post_rent_ad' %}">
 			{% csrf_token %}
 			<div class="columns">
-				<div class="column">
+				<div class="column" id='hh_no'>
+					{{form.house_no.errors}}
 					{{form.house_no.label}}
 					{{form.house_no}}
-					
 				</div>
 				<div class="column">
+					{{form.street_address.errors}}
 					{{form.street_address.label}}
 					{{form.street_address}}
 				</div>
 			</div>
 			<div class="columns">
-				<div class="column">
+<!-- 				<div class="column">
+					{{form.area.errors}}
 					{{form.area.label}}
 					{{form.area}}
+				</div> -->
+				<div class="column">
+					{{form.zipcode.errors}}
+					{{form.zipcode.label}}
+					{{form.zipcode}}
 				</div>
 				<div class="column">
+					{{form.city.errors}}
 					{{form.city.label}}
 					{{form.city}}
 				</div>
+
 			</div>
-			<div class="columns">
+<!-- 			<div class="columns">
 				<div class="column field">
+					{{form.state.errors}}
 					{{form.state.label}}
 					<div class="control">
-						<div class="select">
+						<div class="select is-small">
 							{{form.state}}
 						</div>
 					</div>
 				</div>
 				<div class="column">
+					{{form.zipcode.errors}}
 					{{form.zipcode.label}}
 					{{form.zipcode}}
 				</div>
-			</div>
+			</div> -->
 			<div class="columns">
 				<div class="column">
+					{{form.country.errors}}
 					{{form.country.label}}
 					{{form.country}}
 				</div>
 			</div>
 			<div class="columns">
 				<div class="column">
+					{{form.longitude.errors}}
 					{{form.longitude.label}}
 					{{form.longitude}}
 				</div>
 				<div class="column">
+					{{form.latitude.errors}}
 					{{form.latitude.label}}
 					{{form.latitude}}
 				</div>
 			</div>
-			<div class="columns">
-
+			<div class="columns is-centered" id='button_sec'>
+				<div class="column is-one-quarter">
+					<input id='house_addr_submit' class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
+				</div>
+				<div class="column is-one-quarter">
+					<a class="button is-fullwidth  is-small is-rounded is-danger" href="">Cancel</a>
+				</div>
 			</div>
 		</form>
 	</div>
@@ -76,202 +121,21 @@
 			</div>
 		</div>
 		<progress class="progress is-danger" max="100">80%</progress>
-		<div id='map' style='width: 40vw; height: 60vh;'></div>
+		<div id='map' style='width: 40vw; height: 45vh;'></div>
 	</div>
 </div>
-<div class="columns">
-	<div class="column box is-half mt-1 mb-1 cv-cls">
-		<h6 class="title is-4">House Has</h6>
-		<form method="post">
-			{% csrf_token %}
-			<!-- First row HouseHas -->
-			<div class="columns is-half">
-				<div class="column field">
-					{{hform.kitchen.label}}
-					<div class="control">
-						<div class="select  is-small">
-							{{hform.kitchen}}
-						</div>
-					</div>
-				</div>
-				<div class="column">
-					{{hform.bedroom.label}}
-					{{hform.bedroom}}
-				</div>
-				<div class="column field">
-					{{hform.terrace.label}}
-					<div class="control">
-						<div class="select is-fullwidth is-small">
-							{{hform.terrace}}
-						</div>
-					</div>
-				</div>
-
-
-			</div>
-
-			<!-- second row HouseHas -->
-			<div class="columns">
-				<div class="column field">
-					{{hform.bathroom.label}}
-					<div class="control">
-						<div class="select  is-small">
-							{{hform.bathroom}}
-						</div>
-					</div>
-				</div>
-
-				<div class="column field">
-					{{hform.balcony.label}}
-					<div class="control">
-						<div class="select is-fullwidth is-small">
-							{{hform.balcony}}
-						</div>
-					</div>
-				</div>
-
-				<div class="column field">
-					{{hform.basement.label}}
-					<div class="control">
-						<div class="select is-fullwidth is-small">
-							{{hform.basement}}
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- Third row HouseHas -->
-			<div class="columns">
-				<div class="column field">
-					{{hform.toilet.label}}
-					<div class="control">
-						<div class="select is-small">
-							{{hform.toilet}}
-						</div>
-					</div>
-				</div>
-				<div class="column field ">
-					{{hform.parking.label}}
-					<div class="control">
-						<div class="select is-fullwidth is-small">
-							{{hform.parking}}
-						</div>
-					</div>
-				</div>
-
-				<div class="column field">
-					{{hform.garden.label}}
-					<div class="control">
-						<div class="select is-fullwidth is-small">
-							{{hform.garden}}
-						</div>
-					</div>
-				</div>
-
-			</div>
-			<!-- Fourth row HouseHas -->
-			<div class="columns">
-				<div class="column is-4 field">
-					{{hform.living_room.label}}
-					<div class="control">
-						<div class="select  is-small">
-							{{hform.living_room}}
-						</div>
-					</div>
-				</div>
-				<div class="column field is-4">
-					<!-- <div class="field-label is-small"> -->
-						<!-- <label class="is-small" id="{{hform.wheelchair_accessible.label}}"-->{{hform.wheelchair_accessible.label}}
-						<!-- </label> -->
-					<!-- </div> -->
-					<div class="control">
-						<div class="select is-fullwidth is-small">
-							{{hform.wheelchair_accessible}}
-						</div>
-					</div>
-				</div>
-				
-			</div>
-		</form>
+<div class="columns" id="second_div">
+	<div class="column" id='house_has'>
+		
 	</div>
-	<div class="column is-half box ml-1 mt-1 cc-cls">
-		<h6 class="title is-4">Amenities</h6>
-		<form>
-			{% csrf_token %}
-			
-			<div class="columns is-multiline">
-				{% for field in aform %}
-<!-- 					{% for class in field.label_classes %}
-						{{class}}
-					{% endfor %} -->
-				<div class="column is-4 field">
-					<label class="{% for class in field.label_classes %}{{class}}{% endfor %}">{{field.label}}</label>
-					<div class="control">
-						<div class="select is-fullwidth is-small">
-							{{field}}
-						</div>
-					</div>
-				</div>	
-				{% endfor %}			
-			</div>
-		</form>
+	<div class="column" id='amenities'>
+		
 	</div>
 </div>
-<div class="columns">
-	<div class="column is-half box mb-1 cv-cls">
-		<h6 class="title is-4">Rules</h6>
-		<form>
-			{% csrf_token %}
-			
-			<div class="columns is-multiline">
-				{% for field in rform %}
-<!-- 					{% for class in field.label_classes %}
-						{{class}}
-					{% endfor %} -->
-				<div class="column is-4 field">
-					<label class="{% for class in field.label_classes %}{{class}}{% endfor %}">{{field.label}}</label>
-					<div class="control">
-						<div class="select is-fullwidth is-small">
-							{{field}}
-						</div>
-					</div>
-				</div>	
-				{% endfor %}			
-			</div>
-		</form>
-	</div>
-	<!-- Preferred Tenant -->
-	<div class="column is-half box ml-1 cc-cls">
-		<h6 class="title is-4">Preferred Tenant</h6>
-		<form>
-			{% csrf_token %}
-			
-			<div class="columns is-multiline">
-				{% for field in ptform %}
-<!-- 					{% for class in field.label_classes %}
-						{{class}}
-					{% endfor %} -->
-				<div class="column is-4 field">
-					<label class="{% for class in field.label_classes %}{{class}}{% endfor %}">{{field.label}}</label>
-					<div class="control">
-						<div class="select is-fullwidth is-small">
-							{{field}}
-						</div>
-					</div>
-				</div>	
-				{% endfor %}			
-			</div>
-		</form>
-	</div>
+<div class="columns" id="third_div">
+</div>
+<div class="columns" id='fourth_div'>
 	
-</div>
-<!-- Submit or Cancel -->
-<div class="columns is-centered box mt-1">
-	<div class="column is-one-quarter">
-		<input class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
-	</div>
-	<div class="column is-one-quarter">
-		<a class="button is-fullwidth is-small is-rounded is-danger" href="">Cancel</a>
-	</div>
 </div>
 <style type="text/css">
 	.geocoder {
@@ -366,7 +230,11 @@ margin-top: 1rem;
 		$('#id_longitude').attr('value',longitude.toFixed(2));
 		$('#id_latitude').attr('value',latitude.toFixed(2));
 	}
+
+	
+	// console.log(url);
 });
+var ha_url = "{% url 'renting:house_amenities' %}"
 </script>
 
 {% endblock body %}

@@ -38,18 +38,27 @@ GENDER_PREF = (
 	('O','OTHERS')
 )
 
+ROOMS = (
+	('zero',0),
+	('one',1),
+	('two',2),
+	('three',3),
+	('three_plus',4)
+
+)
+
 
 class NewRentalHouse(models.Model):
-	house_no = models.CharField(max_length=100, unique=True)
+	house_no = models.CharField(max_length=100)
 	street_address = models.TextField()
-	area = models.CharField(max_length=150)
+	# area = models.CharField(max_length=150)
 	city = models.CharField(max_length=150)
-	zipcode = models.IntegerField()
-	state = models.CharField(max_length=1, choices=STATE_CHOICES)
+	zipcode = models.CharField(max_length=12)
+	# state = models.CharField(max_length=100, choices=STATE_CHOICES)
 	country = models.CharField(max_length=100, default='Poland')
 	
-	longitude = models.DecimalField(max_digits=6, decimal_places=4)
-	latitude = models.DecimalField(max_digits=6, decimal_places=4)
+	longitude = models.DecimalField(max_digits=4, decimal_places=2)
+	latitude = models.DecimalField(max_digits=4, decimal_places=2)
 
 
 # class ContactDetails(models.Model):
@@ -57,7 +66,7 @@ class NewRentalHouse(models.Model):
 
 class HouseHas(models.Model):
 
-	bedroom = models.IntegerField()
+	bedroom = models.CharField(max_length=11, choices=ROOMS)
 	kitchen = models.CharField(max_length=2, choices=HH_FIELD_CHOICES)
 	bathroom = models.CharField(max_length=2, choices=HH_FIELD_CHOICES)
 	living_room = models.CharField(max_length=2, choices=HH_FIELD_CHOICES)

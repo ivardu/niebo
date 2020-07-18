@@ -1,0 +1,519 @@
+{% extends 'users/base.html' %}
+{% block body %}
+
+{% if nrh_obj %}
+<div class="modal">
+	<div class="modal-background"></div>
+	<div class="modal-content">
+    <!-- Any other Bulma elements you want -->
+	    <div class="box" id='mc-id'>
+	    	<div class="modal-card-body">
+			    <div class="columns is-centered">
+			    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Are you sure, you want to delete this <span class="has-text-weight-medium">Rent Ad..?</span></h6>
+			    </div>
+			    <div class="columns is-centered">
+					<div class="column is-one-quarter">
+						<button id="md-cncl" class="button is-small is-fullwidth is-warning">Cancel</button>
+					</div>
+					<div class="column is-one-quarter">
+						<a href="{% url 'renting:del_whole' nrh_obj.id %}" id="md-del" class="button is-small is-fullwidth is-danger">Yes</a>
+					</div>
+				</div>
+			</div>
+    	</div>
+	</div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+
+<div class="columns has-background-white-bis box">
+	<h1 class="title is-5 mx-2 my-2 px-2 py-2">Welcome House owner..!! you are few steps away to post your rent ad</h1>
+	 <!-- <h6>Search the Location and pin the marker, fill the form..!!</h6> -->
+</div>
+<div class="columns box mt-1">
+	<div class="column has-background-white mn-col" id={{nrh_obj.id}}>
+		<div class="level">
+			<div class="level-left">
+				<h6 class="title is-4" id='ha_title_id'>Fill your house address <span class="button is-small is-danger">5</span></h6>		
+			</div>
+			<div class="level-right">
+				<button id='ha-e' class='level-item button is-small is-secondary'>Edit</button>
+				<button id='ha-s' type='submit' class="button is-small is-primary">Save</button>
+			</div>
+		</div>
+		<form data-url="{% url 'renting:update_rent_ad' nrh_obj.id %}">
+			{% csrf_token %}
+			<div class="columns">
+				<div class="column" id='hh_no'>
+					{{form.house_no.label}}
+					{{form.house_no}}
+					
+				</div>
+				<div class="column">
+					{{form.street_address.label}}
+					{{form.street_address}}
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column">
+					{{form.area.label}}
+					{{form.area}}
+				</div>
+				<div class="column">
+					{{form.city.label}}
+					{{form.city}}
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column field">
+					{{form.state.label}}
+					<div class="control">
+						<div class="select is-small">
+							{{form.state}}
+						</div>
+					</div>
+				</div>
+				<div class="column">
+					{{form.zipcode.label}}
+					{{form.zipcode}}
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column">
+					{{form.country.label}}
+					{{form.country}}
+				</div>
+			</div>
+			<div class="columns">
+				<div class="column">
+					{{form.longitude.label}}
+					{{form.longitude}}
+				</div>
+				<div class="column">
+					{{form.latitude.label}}
+					{{form.latitude}}
+				</div>
+			</div>
+			<div class="columns is-centered" id='button_sec'>
+
+			</div>
+		</form>
+	</div>
+	<div class="column ">
+		<div class="columns is-centered">
+			<div class="column is-two-thirds has-background-white-ter">
+				<div id='geocoder' class="geocoder"></div>
+			</div>
+		</div>
+		<progress class="progress is-danger" max="100">80%</progress>
+		<div id='map' style='width: 40vw; height: 60vh;'></div>
+	</div>
+</div>
+<div class="columns" id='second_div'>
+	<div class="column box is-half mt-1 mb-1 cv-cls">
+		<div class="level" id='hh-hd-div'>
+			<div class="level-left">
+				<h6 class="title is-4" id='hh_btn_tit'>House Has <span class="button is-small is-danger">4</span></h6>
+			</div>
+			<div class="level-right" id='hh_lr'>
+				<button id='hh-e' class='level-item button is-small is-secondary'>Edit</button>	
+				{% if hh_obj %}
+					<button id='hh-s' class="level-item button is-small is-primary">Save</button>
+				{% else %}
+					<button id='hh-sa' class="level-item button is-small is-primary">Save</button>
+				{% endif %}
+			</div>
+		</div>
+		<form method="post" id='house_has_form' data-url="{% url 'renting:house_has' nrh_obj.id %}"> 
+			{% csrf_token %}
+			<!-- First row HouseHas -->
+			<div class="columns is-half">
+				<div class="column field">
+					<label class="label is-small" for="{{hform.kitchen.id_for_label}}">
+					{{hform.kitchen.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.kitchen}}
+						</div>
+					</div>
+				</div>
+				<div class="column">
+					<label class="label is-small" for="{{hform.bedroom.id_for_label}}">
+					{{hform.bedroom.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.bedroom}}
+						</div>
+					</div>
+				</div>
+				<div class="column field">
+					<label class="label is-small" for="{{hform.terrace.id_for_label}}">
+					{{hform.terrace.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.terrace}}
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+
+			<!-- second row HouseHas -->
+			<div class="columns">
+				<div class="column field">
+					<label class="label is-small" for="{{hform.bathroom.id_for_label}}">
+					{{hform.bathroom.label}}</label>
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.bathroom}}
+						</div>
+					</div>
+				</div>
+
+				<div class="column field">
+					<label class="label is-small" for="{{hform.balcony.id_for_label}}">
+					{{hform.balcony.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.balcony}}
+						</div>
+					</div>
+				</div>
+
+				<div class="column field">
+					<label class="label is-small" for="{{hform.basement.id_for_label}}">
+					{{hform.basement.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.basement}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Third row HouseHas -->
+			<div class="columns">
+				<div class="column field">
+					<label class="label is-small" for="{{hform.toilet.id_for_label}}">
+					{{hform.toilet.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.toilet}}
+						</div>
+					</div>
+				</div>
+				<div class="column field ">
+					<label class="label is-small" for="{{hform.parking.id_for_label}}">
+					{{hform.parking.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{hform.parking}}
+						</div>
+					</div>
+				</div>
+
+				<div class="column field">
+					<label class="label is-small" for="{{hform.garden.id_for_label}}">
+					{{hform.garden.label}}</label>
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.garden}}
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!-- Fourth row HouseHas -->
+			<div class="columns">
+				<div class="column is-4 field">
+					<label class="label is-small" for="{{hform.living_room.id_for_label}}">{{hform.living_room.label}}</label>
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.living_room}}
+						</div>
+					</div>
+				</div>
+				<div class="column field is-4">
+					<label class="label is-small" for="{{hform.wheelchair_accessible.id_for_label}}">
+						{{hform.wheelchair_accessible.label}}
+					</label>
+					<div class="control">
+						<div class="select  is-small">
+							{{hform.wheelchair_accessible}}
+						</div>
+					</div>
+				</div>
+			</div>
+			{% if not hh_obj %}
+			<div id="h_has_btn" class="columns box is-centered">
+				<div class="column is-one-third">
+					<input id="house_has_submit" type="submit" name="submit" value="submit" class="button is-fullwidth  is-small is-rounded is-success">
+				</div>
+				<div class="column is-one-third">
+					<a href="" class="button is-fullwidth is-small is-rounded is-danger">Cancel</a>
+				</div>	
+			</div>
+			{% endif %}
+		</form>
+	</div>
+	
+	<div class="column is-half box ml-1 mt-1 cc-cls" id='amenities'>
+		{% if hh_obj %}
+		<div class="level">
+			<div class="level-left">
+				<h6 class="title is-4" id='amen-tit-id'>Amenities <span class="button is-small is-danger">3</span></h6>		
+			</div>
+			<div class="level-right" id='am-lr'>
+				<button id='am-e' class='level-item button is-small is-secondary'>Edit</button>
+				{% if a_obj %}
+					<button id='am-s' type='button' class="button is-small is-primary">Save</button>
+				{% else %}
+					<button id='am-sa' type='button' class="button is-small is-primary">Save</button>
+				{% endif %}
+				
+			</div>
+		</div>
+		
+		<form id='amenities_form' method="post" data-url="{% url 'renting:save_amenities' nrh_obj.id %}">
+			{% csrf_token %}
+			
+			<div class="columns is-multiline is-centered">
+				{% for field in aform %}
+<!-- 					{% for class in field.label_classes %}
+						{{class}}
+					{% endfor %} -->
+				<div class="column is-4 field">
+					<label class="label is-small" for="{{field.id_for_label}}">{{field.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{field}}
+						</div>
+					</div>
+				</div>	
+				{% endfor %}			
+			</div>
+			{% if not a_obj %}
+			<div class="columns is-centered" id='a_as_btn'>
+				<div class="column is-one-third">
+					<input id="am_as_submit" type="submit" name="submit" value="submit" class="button is-fullwidth  is-small is-rounded is-success">
+				</div>
+				<div class="column is-one-third">
+					<a href="" class="button is-fullwidth is-small is-rounded is-danger">Cancel</a>
+				</div>	
+			</div>
+			{% endif %}
+		</form>
+		{% endif %}
+	</div>
+</div>
+
+<div class="columns" id='third_div'>
+	<div class="column is-half box mb-1 cv-cls" id='rules'>
+		{% if a_obj %}
+		<div class="level">
+			<div class="level-left">
+				<h6 class="title is-4" id='rul-titl'>Rules <span class="button is-small is-danger">2</span></h6>
+			</div>
+			<div class="level-right">
+				<button id='rl-e' class='level-item button is-small is-secondary'>Edit</button>
+				{% if r_obj %}
+					<button id='rl-s' type='submit' class="button is-small is-primary">Save</button>
+				{% else %}
+					<button id='rl-sa' type='submit' class="button is-small is-primary">Save</button>
+				{% endif %}
+			</div>
+		</div>
+		
+		<form id='rules_form' method="post" data-url="{% url 'renting:save_rules' nrh_obj.id %}">
+			{% csrf_token %}		
+			<div class="columns is-multiline is-centered">
+				{% for field in rform %}
+				<div class="column is-4 field">
+					<label class="label is-small" for="{{field.id_for_label}}">{{field.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{field}}
+						</div>
+					</div>
+				</div>	
+				{% endfor %}			
+			</div>
+			{% if not r_obj %}
+			<div class="columns is-centered" id='rules_button'>
+				<div class="column is-one-quarter">
+					<input id='rl_has_submit' class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
+				</div>
+				<div class="column is-one-quarter">
+					<a class="button is-fullwidth  is-small is-rounded is-danger" href="">Cancel</a>
+				</div>
+			</div>
+			{% endif %}
+		</form>
+		{% endif %}
+	</div>
+	<!-- Preferred Tenant -->
+	
+	<div class="column is-half box ml-1 cc-cls" id='preferred_tenenat'>
+		{% if r_obj %}
+		<div class="level">
+			<div class="level-left">
+				<h6 class="title is-4" id='pt-titl'>Preferred Tenant <span class="button is-small is-danger">1</span></h6>		
+			</div>
+			<div class="level-right" id=''>
+				<button id='pt-e' class='level-item button is-small is-secondary'>Edit</button>
+				{% if pt_obj %}
+					<button id='pt-s' type='button' class="button is-small is-primary">Save</button>
+				{% else %}
+					<button id='pt-sa' type='button' class="button is-small is-primary">Save</button>
+				{% endif %}
+			</div>
+		</div>
+		<form id='pt_form' method="post" data-url="{% url 'renting:save_pt' nrh_obj.id %}">
+			{% csrf_token %}
+			<div class="columns is-multiline">
+				{% for field in ptform %}
+				<div class="column is-4 field">
+					<label class="label is-small" for="{{field.id_for_label}}">{{field.label}}</label>
+					<div class="control">
+						<div class="select is-small">
+							{{field}}
+						</div>
+					</div>
+				</div>	
+				{% endfor %}			
+			</div>
+			{% if not pt_obj %}
+			<div class="columns is-centered" id='pt_button'>
+				<div class="column is-one-quarter">
+					<input id='pt_has_submit' class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
+				</div>
+				<div class="column is-one-quarter">
+					<a class="button is-fullwidth  is-small is-rounded is-danger" href="">Cancel</a>
+				</div>
+			</div>
+			{% endif %}
+		</form>
+		{% endif %}
+	</div>
+
+</div>
+
+<!-- Submit or Cancel -->
+
+
+<div class="columns is-centered box mt-1" id='fourth_div'>
+	{% if pt_obj %}
+	<div class="column is-one-quarter">
+		<button class="button is-fullwidth  is-small is-rounded is-success" type="button" name="submit" >I'm OK</button>
+	</div>
+	<div class="column is-one-quarter">
+		<button id='dl_btn' class="button is-fullwidth is-small is-rounded is-danger">Delete</button>
+	</div>
+	{% endif %}
+</div>
+
+{% else %}
+<div class="box">
+	<div class="columns is-centered">
+			<h6 class="title is-size-4"> The Page you are looking to edit doesn't exist</h6>
+	</div>
+</div>
+{% endif %}
+
+<style type="text/css">
+	.geocoder {
+/*position: absolute;*/
+z-index: 1;
+/*width: 95%;*/
+/*left: 50%;*/
+/*margin-left: -25%;*/
+top: 10px;
+}
+.mapboxgl-ctrl-geocoder {
+min-width: 100%;
+}
+#map {
+margin-top: 1rem;
+}
+</style>
+<script type="text/javascript">
+	$(function(){
+	mapboxgl.accessToken = 
+		'pk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYm80c2E5NjFnemcycXM0YXE3cTZmaWwifQ.RUzXxKHAH_vuUSs0hc4t7g';
+	var map = new mapboxgl.Map({
+		container: 'map',
+		style: 'mapbox://styles/mapbox/streets-v11',
+		center: [20.977185,52.234062],
+		zoom: 10,
+
+	});
+
+	var geocoder = new MapboxGeocoder({
+		accessToken:mapboxgl.accessToken,
+		mapboxgl:mapboxgl,
+		marker:false
+	})
+	// Adding the geocoder result to the map
+	document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+	
+	//Creating Global marker used in map's load and click events
+ 	var marker = new mapboxgl.Marker({
+				draggable:true,
+				color:'red',
+			});	
+
+ 	// Re-position the marker on new geocoder result
+ 	geocoder.on('result', function(ev) {
+ 		lnglt = ev.result.geometry.coordinates
+		 marker.setLngLat(lnglt).addTo(map);
+		 // console.log(lnglt[1],lnglt[2]);
+		 lngLatChange(lnglt[0],lnglt[1]);
+	});
+
+ 	// On Map Load, create a maker and add it to the Map
+ 	map.on('load',function(e){
+		cord = geocoder.options.proximity;
+		lt = [cord.longitude, cord.latitude];
+		marker.setLngLat(lt).addTo(map);
+		// $('#id_longitude').attr('value',cord.longitude);
+		// $('#id_latitude').attr('value',cord.latitude);
+		lngLatChange(cord.longitude, cord.latitude);
+		$('.progress').remove();
+ 	});
+
+ 	marker.on('dragend', onDragEnd);
+ 	// On Map click, re-position the marker the clicked position
+	map.on('click', function(e){
+
+		marker.setLngLat(e.lngLat).addTo(map);
+
+		//Add co-ordinates details to the marker top on marker-drag 
+		onDragEnd();
+ 		
+		// marker.on('dragend', onDragEnd);
+	});
+
+	function onDragEnd() {
+			var lngLat = marker.getLngLat();
+			var div = $('#pp-disp');
+			if(div.length > 0){
+				$(div).remove();
+			}
+			var disp = document.createElement("div");
+			var el = $('.mapboxgl-marker');
+			disp.setAttribute('id','pp-disp');
+			
+			disp.innerHTML = 'Longitude: ' + (lngLat.lng).toFixed(2) + '<br />Latitude: ' + lngLat.lat.toFixed(2);
+			el.prepend(disp);
+			console.log($('#id_longitude'));
+			lngLatChange(lngLat.lng, lngLat.lat);
+
+	}
+	function lngLatChange(longitude, latitude){
+		$('#id_longitude').attr('value',longitude.toFixed(2));
+		$('#id_latitude').attr('value',latitude.toFixed(2));
+	}
+});
+</script>
+
+{% endblock body %}

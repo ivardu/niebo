@@ -1,5 +1,7 @@
 from django import forms
-from .models import NewRentalHouse, STATE_CHOICES, HouseHas, Amenities, Rules, PreferredTenant, HH_FIELD_CHOICES, FIELD_CHOICES, GENDER_PREF
+from .models import (NewRentalHouse, HouseHas, 
+	Amenities, Rules, PreferredTenant, STATE_CHOICES, HH_FIELD_CHOICES, 
+	FIELD_CHOICES, GENDER_PREF, ROOMS)
 
 class SearchForm(forms.Form):
 	place = forms.CharField(widget=forms.TextInput(attrs={'class':'input' ,'placeholder':'Search place'}))
@@ -8,28 +10,38 @@ class SearchForm(forms.Form):
 class RentalHouseForm(forms.ModelForm):
 
 	house_no = forms.CharField(label='House No',widget=forms.TextInput(attrs={'class':'input', 'placeholder':'House No#'}))
-	street_address = forms.CharField(label='Street Address',widget=forms.TextInput(attrs={'class':'input', 'placeholder':'Street Address'}))
-	area = forms.CharField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'Area'}))
+	street_address = forms.CharField(label='Street Address',widget=forms.Textarea(attrs={'class':'input', 'placeholder':'Street Address'}))
+	# area = forms.CharField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'Area'}))
 	city = forms.CharField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'City'}))
-	state = forms.ChoiceField(label='State/Province', choices=STATE_CHOICES, widget=forms.Select(attrs={'class':'multiple'}))
+	# state = forms.ChoiceField(label='State/Province', choices=STATE_CHOICES, widget=forms.Select(attrs={'class':'multiple'}))
 	zipcode = forms.IntegerField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'ZipCode'}))
 	country = forms.CharField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'Poland'}), disabled=True, required=False)
 
-	longitude = forms.DecimalField(widget=forms.TextInput(attrs={'class':'input has-background-grey-lighter', 'placeholder':'Longitude'}))
-	latitude = forms.DecimalField(widget=forms.TextInput(attrs={'class':'input has-background-grey-lighter', 'placeholder':'Latitude'}))
+	longitude = forms.DecimalField(widget=forms.NumberInput(attrs={'class':'input has-background-grey-lighter', 'placeholder':'Longitude','readonly':'readonly'}))
+	latitude = forms.DecimalField(widget=forms.NumberInput(attrs={'class':'input has-background-grey-lighter', 'placeholder':'Latitude','readonly':'readonly'}))
 	
 	class Meta:
 		model = NewRentalHouse
 		fields = '__all__'
 
 
-		 # widget=forms.TextInput(attrs={'class':'input', 'placeholder':'State'})
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args,**kwargs)
+		# print(self.visible_fields())
+		for visible in self.visible_fields():
+			visible.field.widget.attrs['class'] = 'input is-small'
+			# print(visible)
+
+		# self.fields['state'].widget.attrs['class'] = 'multiple'
+		self.fields['longitude'].widget.attrs['class'] = 'input is-small has-background-grey-lighter'
+		self.fields['latitude'].widget.attrs['class'] = 'input is-small has-background-grey-lighter'
+
 
 # Defining all fields is hectic process
 
 class HouseHasForm(forms.ModelForm):
 
-	bedroom = forms.IntegerField(label='Bedroom', widget=forms.NumberInput(attrs={'class':'input is-small'}))
+	bedroom = forms.ChoiceField(label='Bedroom', choices=ROOMS)
 	kitchen = forms.ChoiceField(choices=HH_FIELD_CHOICES, widget=forms.Select(attrs={'class':'multiple'}))
 	bathroom = forms.ChoiceField(choices=HH_FIELD_CHOICES,widget=forms.Select(attrs={'class':'multiple'}))
 	living_room = forms.ChoiceField(choices=HH_FIELD_CHOICES,widget=forms.Select(attrs={'class':'multiple'}))
@@ -44,7 +56,7 @@ class HouseHasForm(forms.ModelForm):
 	class Meta:
 		model = HouseHas
 		fields = '__all__'
-		exclude = ['nrh']
+		exclude = ['nrh']	
 
 	def __init__(self, *args,**kwargs):
 		super().__init__(*args,**kwargs)
@@ -56,7 +68,7 @@ class AmenitiesForm(forms.ModelForm):
 
 	#This method provides an easy way of definig the choices and widgets for the each field 
 	def __init__(self, *args, **kwargs):
-		super().__init__()
+		super().__init__(*args,**kwargs)
 		for visible in self.visible_fields():
 			visible.field.widget.attrs['class'] = 'multiple'
 			visible.field.choices = FIELD_CHOICES
@@ -78,7 +90,7 @@ class RulesForm(forms.ModelForm):
 		exclude = ['nrh']
 
 	def __init__(self, *args, **kwargs):
-		super().__init__()
+		super().__init__(*args,**kwargs)
 		for visible in self.visible_fields():
 			# visible.field['gender'].choices = GENDER_PREF
 			visible.field.choices = FIELD_CHOICES 
@@ -87,7 +99,7 @@ class RulesForm(forms.ModelForm):
 class PreferredTenantForm(forms.ModelForm):
 
 	def __init__(self, *args, **kwargs):
-		super().__init__()
+		super().__init__(*args, **kwargs)
 		for visible in self.visible_fields():
 			visible.field.choices = FIELD_CHOICES
 		self.fields['gender'].choices = GENDER_PREF

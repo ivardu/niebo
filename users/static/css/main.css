@@ -65,3 +65,16 @@ input::placeholder{
 .cv-cls{
 	margin-right: -0.1rem;
 }
+.label{
+	cursor: pointer;
+}
+
+#ha-e, #hh-e, #am-e, #rl-e, #pt-e, #ha-sa, #hh-sa, #am-sa, #rl-sa, #pt-sa{
+	display: none;
+}
+
+/*input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{
+	-webkit-appearance:none;
+	margin:0;
+}*/
