@@ -14,7 +14,7 @@ class RentalHouseForm(forms.ModelForm):
 	# area = forms.CharField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'Area'}))
 	city = forms.CharField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'City'}))
 	# state = forms.ChoiceField(label='State/Province', choices=STATE_CHOICES, widget=forms.Select(attrs={'class':'multiple'}))
-	zipcode = forms.IntegerField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'ZipCode'}))
+	zipcode = forms.CharField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'ZipCode'}))
 	country = forms.CharField(widget=forms.TextInput(attrs={'class':'input', 'placeholder':'Poland'}), disabled=True, required=False)
 
 	longitude = forms.DecimalField(widget=forms.NumberInput(attrs={'class':'input has-background-grey-lighter', 'placeholder':'Longitude','readonly':'readonly'}))

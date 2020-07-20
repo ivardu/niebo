@@ -15,4 +15,5 @@ urlpatterns = [
 	path('spt/<int:id>/', rt.save_pt, name='save_pt'),
 	path('edw/<int:id>/', rt.edit_whole, name='edit_whole'),
 	path('dlw/<int:id>/', rt.delete_whole, name='del_whole'),
+	path('zp/', rt.zipcode_validate, name='validate_zip'),
 ]

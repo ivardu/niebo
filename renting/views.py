@@ -1,10 +1,11 @@
 from django.shortcuts import render, reverse
 from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.core.serializers.json import DjangoJSONEncoder
 
 from .forms import SearchForm, RentalHouseForm, HouseHasForm, AmenitiesForm, RulesForm, PreferredTenantForm
 from .models import NewRentalHouse, HouseHas, Amenities, PreferredTenant, Rules
-import requests
+import requests, pgeocode, pandas, json
 
 # url = reverse_lazy('renting:house_amenities')
 
@@ -22,13 +23,46 @@ def renting_house_results(request):
 		url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/'+place+'.json?access_token=pk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYm80c2E5NjFnemcycXM0YXE3cTZmaWwifQ.RUzXxKHAH_vuUSs0hc4t7g&limit=1'
 		response = requests.get(url)
 		json_resp = response.json()
-		print(json_resp)
-		# , response, json_resp['features'])
+		# print(json_resp)
 		cord = json_resp['features'][0]['center']
 		cord = str(cord[0])+','+str(cord[1])
-		# se_place = request.session.get('place', 'Poland')
 		request.session['cord'] = cord
-		print(cord)
+		place_name = (json_resp['features'][0]['place_name']).split(',')[0]
+		# print(place_name)
+
+		house_list = NewRentalHouse.objects.filter(city=place_name)
+
+		features = []
+
+		for hous_obj in house_list:
+
+			item = [
+			    {
+			      "type": "Feature",
+			      "geometry": {
+			        "type": "Point",
+			        "coordinates": [
+			          hous_obj.longitude,
+			          hous_obj.latitude
+			        ]
+			      },
+			      "properties": {
+			      	'house_no':hous_obj.house_no,
+			        "street_address":hous_obj.street_address,
+			        "postalCode": hous_obj.zipcode,
+			        "city": hous_obj.city,
+			        "country": hous_obj.country,
+			      }
+			    }
+			]
+			features.append(item)
+
+		house = {
+			"type": "FeatureCollection",
+			"features":features
+  		}
+		house = json.dumps(house, cls=DjangoJSONEncoder)
+		# print(hous_obj.longitude,hous_obj.latitude)
 
 	else:
 		cord = request.session.get('cord', '21.01,52.22')
@@ -336,4 +370,30 @@ def delete_whole(request, id):
 	else:
 		return HttpResponse('Error')
 
+
+
+def zipcode_validate(request):
+	pl_zip = pgeocode.Nominatim('pl')
+
+	try:
+		zip_obj = pl_zip.query_postal_code(request.GET['zipcode'])
+		# print(zip_obj, request.GET['zipcode'])
+		cond = pandas.isna(zip_obj.community_name)
+		print(zip_obj)
+	except:
+		zip_obj = None
+
+	if not cond:
+		data = {
+		'city' : zip_obj.community_name
+		}
+		print(zip_obj.community_name)
+		return JsonResponse(data)
+
+	else:
+		error = {
+		 'zipcode':'Enter a valid ZipCode'
+		}
+		print(type(error))
+		return JsonResponse(error, status=404)
 

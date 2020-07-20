@@ -347,16 +347,45 @@ $(function(){
 		}
 	});
 
-	$('#bdy-ma').on('change','#id_house_no', function(){
-		var err = $(this).parent().find('#hh_err')
-		if(err){
-			$(err).remove();
-		}
-	})
+	// $('#bdy-ma').on('change','#id_zipcode', function(){
+	// 	var err = $(this).parent().find('#hh_err')
+	// 	// $(this).parents('form').find('#id_city').val('');
+	// 	if(err){
+	// 		$(err).remove();
+	// 	}
+	// })
 
 	// $('#bdy-ma').on('keyup','#id_zipcode, #id_longitude, #id_latitude', function(){
 	// 	if($(this).isisNumeric())
 	// })
+	$('#bdy-ma').on('blur','#id_zipcode', function(){
+		var dat = $('#id_zipcode').val();
+		var err = $(this).parent().find('#hh_err')
+		if(err){
+			$(err).remove();
+		}
+		// console.log(dat);
+		$.ajax({
+			url:'/zp/',
+			context:this,
+			data:{'zipcode':dat},
+			type:'GET',
+			dataType:'json',
+			success:function(data){
+				console.log(data.city);
+				// console.log($(this).parents('form').find('#id_city'));
+				$(this).parents('form').find('#id_city').val(data.city);
+			},
+			error:function(error){
+				err = error.responseJSON['zipcode'];
+				console.log(err.zipcode);
+				$(this).parent('.column').append("<small class='has-text-danger is-size-7' id='hh_err'>"+err+"</small>");
+				$(this).parents('form').find('#id_city').val('');
+				// console.log($(this).parent('.column'));
+
+			}
+		})
+	});
 	
 
 });
