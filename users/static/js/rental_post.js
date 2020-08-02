@@ -321,11 +321,16 @@ $(function(){
 
 $(function(){
 
-	$('#bdy-ma').on('click','#dl_btn, .del-tmp',function(event){
+	$('#mn-bd').on('click','#lgn',function(event){
 		event.preventDefault();
+		$('#lgn-mod').attr('class','modal is-active');
+
+	})
+
+	$('.container').on('click','#dl_btn, .del-tmp',function(event){
+		event.preventDefault();
+		console.log('working');
 		$('.modal').attr('class','modal is-active');
-
-
 
 	});
 

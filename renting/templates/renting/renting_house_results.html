@@ -1,30 +1,98 @@
 {% extends 'users/base.html' %}
-{% block body %}
-<div>
-	<!-- {{place}} -->
-	<div id='map' style='width: 600px; height: 500px;'></div>
-	<!-- <span id='cord'>{{cord}}</span> -->
-
-	<div>
-		{{house}}
+{% load static %}
+{% block navbar %}
+<form method="post" class="hm">
+	<div class="columns">
+		<div class="navbar-item">
+			<!-- <form method='post'> -->
+				{% csrf_token %}
+				<div id='geocoder' class="inpline"></div>
+			<!-- </form> -->
+		</div>
+		<div class="navbar-item">
+				<button id='sr-btn' type="submit" class="button">Search</button>
+		</div>
 	</div>
-	<script>
+</form>
+{% endblock navbar %}
+{% block body %}
+<div class="container" id='rh-bdy'>
+	<div class="columns" id='sec-col'>
+		<div class="column is-half" id='rhd-col'>
+			<div class="columns is-multiline" id="rhd-plc">
+				{% if houses_list %}
+					{% for house in houses_list %}
+					<div class="column is-half box hsrs">
+						<p class="title is-6">#{{house.house_no}},</p>
+						<p class="subtitle is-6">{{house.street_address}}, {{house.zipcode}}, {{house.city}},
+						{{house.country}}</p>
+
+						<!-- <p class="subtitle is-6">{{house.street_address}},</p>
+						<p class="subtitle is-6">{{house.zipcode}}, {{house.city}}</p>
+						<p class="subtitle is-6">{{house.country}}</p> -->
+						<img class="img-cls" src="{% static 'img/hmm-1.png'%}">
+							
+					</div>
+					{% endfor %}
+				{% else %}
+				<div class="box column is-full">Results not found for the city you are looking for try other city</div>
+				{% endif %}
+			</div>
+			
+		</div>
+		<div class="column is-half" id='oth-map'>
+			<div id='map' class="mp-cls"></div>
+		</div>
+	</div>
+</div>
+
+
+<script>
 	// console.log(cord);
-	var houses = {{ house|safe }};
+	
 	// widget.init(houses);
 	// console.log(houses);
+
+	$(function(){
+		mapboxgl.accessToken = '{{PUB_KEY}}';
+		var geocoder = new MapboxGeocoder({
+			accessToken:mapboxgl.accessToken,
+			mapboxgl:mapboxgl
+		})
+		// console.log(geocoder);
+	// document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+		geocoder.addTo('#geocoder');
+			$('.mapboxgl-ctrl-geocoder--input').attr('value','{{place}}');
+			$('.mapboxgl-ctrl-geocoder--input').attr('name','place');	
+	});
+
+	var houses = JSON.parse("{{house|escapejs}}");
+	// console.log(houses);
+
+	// $(function(){
+	// 	$('#sr-btn').on('click', function(){
+	// 		var data = $('form .mapboxgl-ctrl-geocoder--input').val();
+	// 		// console.log(data);
+	// 		$.ajax({
+	// 			type:'POST',
+	// 			data:{'place':data}
+	// 		})
+	// 	})
+	// })
+
 	$(function(){
 		// var cord = document.getElementById('cord').innerHTML;
 		var cord = '{{cord}}';
 		// console.log(cord);
-		mapboxgl.accessToken = 'pk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYm80c2E5NjFnemcycXM0YXE3cTZmaWwifQ.RUzXxKHAH_vuUSs0hc4t7g';
+		mapboxgl.accessToken = '{{PUB_KEY}}';
 		var map = new mapboxgl.Map({
 		container: 'map',
 		style: 'mapbox://styles/mapbox/streets-v11',
 		// center:[76.49, 11.83],
 		center:[20.977185,52.234062],
-		zoom:3
+		zoom:10
 		});
+		map.scrollZoom.disable();
 
 		// http://maps.google.com/?q=Nowoursynowska+145A%2CWarsaw
 
@@ -43,35 +111,125 @@
 		// map.jumpTo({center:[lng, lt],zoom:10});
 		// });
 
-		// var houses_json = JSON.parse('{{house}}');
+		// var houses_json = JSON.parse('{{house|safe}}');
 		
-		// {{house}}
-		// var houses = houses_json.content;
-		console.log(typeof(houses));
-		var rent_house = JSON.parse(houses);
-		console.log(typeof(rent_house))
-		rent_house.features.forEach(function(house, i){
-			house.properties.id=i;
+		// var houses = houses;
+		if(houses.features){
+			houses.features.forEach(function(house, i){
+				house.properties.id=i;
+			});
+
+		map.on('load', function(e){
+			map.addSource("places", {
+	        	"type": "geojson",
+	        	"data": houses
+        	});
+        	addMarkers();
+		});
+
+
+		function addMarkers() {
+			houses.features.forEach(function(marker){
+				// create a DOM element for the marker
+				var el = document.createElement('div');
+				el.id = "marker-" + marker.properties.id;
+				el.className = 'marker';
+				el.style.backgroundImage ='url(/static/img/house-marker.png)';
+				 
+				 // console.log(marker);
+
+				// add marker to map
+				new mapboxgl.Marker(el, { offset: [0, -23] })
+				.setLngLat(marker.geometry.coordinates)
+				.addTo(map);
+
+				el.addEventListener('click', function(e){
+					/* Fly to the point */
+					flyToStore(marker);
+					/* Close all other popups and display popup for clicked store */
+					createPopUp(marker);
+					/* Highlight listing in sidebar */
+					var activeItem = document.getElementsByClassName('active');
+					e.stopPropagation();
+					if (activeItem[0]) {
+					  activeItem[0].classList.remove('active');
+					}
+					// var listing = document.getElementById('listing-' + marker.properties.id);
+					// listing.classList.add('active');
+				});
+			});
+		}
+
+		map.on('click', function(e) {
+			/* Determine if a feature in the "locations" layer exists at that point. */ 
+			var features = map.queryRenderedFeatures(e.point, {
+			layers: ['locations']
+			});
+
+			/* If yes, then: */
+			if (features.length) {
+			var clickedPoint = features[0];
+
+			/* Fly to the point */
+			flyToStore(clickedPoint);
+
+			/* Close all other popups and display popup for clicked store */
+			createPopUp(clickedPoint);
+
+			/* Highlight listing in sidebar (and remove highlight for all other listings) */
+			var activeItem = document.getElementsByClassName('active');
+			if (activeItem[0]) {
+			  activeItem[0].classList.remove('active');
+			}
+			// var listing = document.getElementById('listing-' + clickedPoint.properties.id);
+			// listing.classList.add('active');
+			}
 		});
 		// console.log(houses)
 
-		map.on('load', function (e) {
-		  /* Add the data to your map as a layer */
-		map.addLayer({
-		    "id": "locations",
-		    "type": "symbol",
-		    /* Add a GeoJSON source containing place coordinates and information. */
-		    "source": {
-		      "type": "geojson",
-		      "data": houses
-		    },
-		    "layout": {
-		      "icon-image": "restaurant-15",
-		      "icon-allow-overlap": true,
-		    }
-		  });
+		// map.on('load', function (e) {
+		//   /* Add the data to your map as a layer */
+		// map.addLayer({
+		//     "id": "locations",
+		//     "type": "symbol",
+		//      Add a GeoJSON source containing place coordinates and information. 
+		//     "source": {
+		//       "type": "geojson",
+		//       "data": houses
+		//     },
+		//     "layout": {
+		//       "icon-image": "restaurant-15",
+		//       "icon-allow-overlap": true,
+		//     }
+		//   });
+		// });
+
+		      /**
+       * Use Mapbox GL JS's `flyTo` to move the camera smoothly
+       * a given center point.
+      **/
+	function flyToStore(currentFeature) {
+		map.flyTo({
+		center: currentFeature.geometry.coordinates,
+		zoom: 10
 		});
-	});	
+	}
+
+      /**
+       * Create a Mapbox GL JS `Popup`.
+      **/
+	function createPopUp(currentFeature) {
+		var popUps = document.getElementsByClassName('mapboxgl-popup');
+		if (popUps[0]) popUps[0].remove();
+		var popup = new mapboxgl.Popup({closeOnClick: false})
+		.setLngLat(currentFeature.geometry.coordinates)
+		.setHTML('<h3>Sweetgreen</h3>' +
+		'<h4>' + currentFeature.properties.house_no + '</h4>')
+		.addTo(map);
+	}
+	}
+
+});	
 </script>
-</div>
+
 {% endblock %}

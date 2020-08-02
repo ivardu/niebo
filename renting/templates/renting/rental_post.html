@@ -1,141 +1,143 @@
 {% extends 'users/base.html' %}
 {% block body %}
-<div class="modal">
-	<div class="modal-background"></div>
-	<div class="modal-content" id='mc-id'>
-    <!-- Any other Bulma elements you want -->
-	    <div class="box">
-	    	<div class="modal-card-body">
-			    <div class="columns is-centered">
-			    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Are you sure, you want to delete this <span class="has-text-weight-medium">Rent Ad..?</span></h6>
-			    </div>
-			    <div class="columns is-centered">
-					<div class="column is-one-quarter">
-						<button id="md-cncl" class="button is-small is-fullwidth is-warning">Cancel</button>
-					</div>
-					<div class="column is-one-quarter">
-						<a href="" id="md-del" class="button is-small is-fullwidth is-danger">Yes</a>
-					</div>
-				</div>
-			</div>
-    	</div>
-	</div>
-  <button class="modal-close is-large" aria-label="close"></button>
-</div>
-<div class="columns has-background-white-bis box">
-	<h1 class="title is-5 mx-2 my-2 px-2 py-2">Welcome House owner..!! you are few steps away to post your rent ad</h1>
-	 <!-- <h6>Search the Location and pin the marker, fill the form..!!</h6> -->
-</div>
-<div class="columns box mt-1">
-	<div class="column has-background-white mn-col" id='pkhere'>
-		<div class="level">
-			<div class="level-left">
-				<h6 class="title is-4" id='ha_title_id'>Fill your house address <span class="button is-small is-danger">5</span></h6>
-			</div>
-			<div class="level-right">
-				<button id='ha-e' class='level-item button is-small is-secondary'>Edit</button>
-				<button id='ha-sa' type='submit' class="button is-small is-primary">Save</button>
-			</div>
-		</div>
-		<form method="post" id="house_addr" action="{% url 'renting:post_rent_ad' %}">
-			{% csrf_token %}
-			<div class="columns">
-				<div class="column" id='hh_no'>
-					{{form.house_no.errors}}
-					{{form.house_no.label}}
-					{{form.house_no}}
-				</div>
-				<div class="column">
-					{{form.street_address.errors}}
-					{{form.street_address.label}}
-					{{form.street_address}}
-				</div>
-			</div>
-			<div class="columns">
-<!-- 				<div class="column">
-					{{form.area.errors}}
-					{{form.area.label}}
-					{{form.area}}
-				</div> -->
-				<div class="column">
-					{{form.zipcode.errors}}
-					{{form.zipcode.label}}
-					{{form.zipcode}}
-				</div>
-				<div class="column">
-					{{form.city.errors}}
-					{{form.city.label}}
-					{{form.city}}
-				</div>
-
-			</div>
-<!-- 			<div class="columns">
-				<div class="column field">
-					{{form.state.errors}}
-					{{form.state.label}}
-					<div class="control">
-						<div class="select is-small">
-							{{form.state}}
+<div class="container">
+	<div class="modal">
+		<div class="modal-background"></div>
+		<div class="modal-content" id='mc-id'>
+	    <!-- Any other Bulma elements you want -->
+		    <div class="box">
+		    	<div class="modal-card-body">
+				    <div class="columns is-centered">
+				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Are you sure, you want to delete this <span class="has-text-weight-medium">Rent Ad..?</span></h6>
+				    </div>
+				    <div class="columns is-centered">
+						<div class="column is-one-quarter">
+							<button id="md-cncl" class="button is-small is-fullwidth is-warning">Cancel</button>
+						</div>
+						<div class="column is-one-quarter">
+							<a href="" id="md-del" class="button is-small is-fullwidth is-danger">Yes</a>
 						</div>
 					</div>
 				</div>
-				<div class="column">
-					{{form.zipcode.errors}}
-					{{form.zipcode.label}}
-					{{form.zipcode}}
-				</div>
-			</div> -->
-			<div class="columns">
-				<div class="column">
-					{{form.country.errors}}
-					{{form.country.label}}
-					{{form.country}}
-				</div>
-			</div>
-			<div class="columns">
-				<div class="column">
-					{{form.longitude.errors}}
-					{{form.longitude.label}}
-					{{form.longitude}}
-				</div>
-				<div class="column">
-					{{form.latitude.errors}}
-					{{form.latitude.label}}
-					{{form.latitude}}
-				</div>
-			</div>
-			<div class="columns is-centered" id='button_sec'>
-				<div class="column is-one-quarter">
-					<input id='house_addr_submit' class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
-				</div>
-				<div class="column is-one-quarter">
-					<a class="button is-fullwidth  is-small is-rounded is-danger" href="">Cancel</a>
-				</div>
-			</div>
-		</form>
-	</div>
-	<div class="column ">
-		<div class="columns is-centered">
-			<div class="column is-two-thirds has-background-white-ter">
-				<div id='geocoder' class="geocoder"></div>
-			</div>
+	    	</div>
 		</div>
-		<progress class="progress is-danger" max="100">80%</progress>
-		<div id='map' style='width: 40vw; height: 45vh;'></div>
+	  <button class="modal-close is-large" aria-label="close"></button>
 	</div>
-</div>
-<div class="columns" id="second_div">
-	<div class="column" id='house_has'>
+	<div class="columns has-background-white-bis box">
+		<h1 class="title is-5 mx-2 my-2 px-2 py-2">Welcome House owner..!! you are few steps away to post your rent ad</h1>
+		 <!-- <h6>Search the Location and pin the marker, fill the form..!!</h6> -->
+	</div>
+	<div class="columns box mt-1">
+		<div class="column has-background-white mn-col" id='pkhere'>
+			<div class="level">
+				<div class="level-left">
+					<h6 class="title is-4" id='ha_title_id'>Fill your house address <span class="button is-small is-danger">5</span></h6>
+				</div>
+				<div class="level-right">
+					<button id='ha-e' class='level-item button is-small is-secondary'>Edit</button>
+					<button id='ha-sa' type='submit' class="button is-small is-primary">Save</button>
+				</div>
+			</div>
+			<form method="post" id="house_addr" action="{% url 'renting:post_rent_ad' %}">
+				{% csrf_token %}
+				<div class="columns">
+					<div class="column" id='hh_no'>
+						{{form.house_no.errors}}
+						{{form.house_no.label}}
+						{{form.house_no}}
+					</div>
+					<div class="column">
+						{{form.street_address.errors}}
+						{{form.street_address.label}}
+						{{form.street_address}}
+					</div>
+				</div>
+				<div class="columns">
+	<!-- 				<div class="column">
+						{{form.area.errors}}
+						{{form.area.label}}
+						{{form.area}}
+					</div> -->
+					<div class="column">
+						{{form.zipcode.errors}}
+						{{form.zipcode.label}}
+						{{form.zipcode}}
+					</div>
+					<div class="column">
+						{{form.city.errors}}
+						{{form.city.label}}
+						{{form.city}}
+					</div>
+
+				</div>
+	<!-- 			<div class="columns">
+					<div class="column field">
+						{{form.state.errors}}
+						{{form.state.label}}
+						<div class="control">
+							<div class="select is-small">
+								{{form.state}}
+							</div>
+						</div>
+					</div>
+					<div class="column">
+						{{form.zipcode.errors}}
+						{{form.zipcode.label}}
+						{{form.zipcode}}
+					</div>
+				</div> -->
+				<div class="columns">
+					<div class="column">
+						{{form.country.errors}}
+						{{form.country.label}}
+						{{form.country}}
+					</div>
+				</div>
+				<div class="columns">
+					<div class="column">
+						{{form.longitude.errors}}
+						{{form.longitude.label}}
+						{{form.longitude}}
+					</div>
+					<div class="column">
+						{{form.latitude.errors}}
+						{{form.latitude.label}}
+						{{form.latitude}}
+					</div>
+				</div>
+				<div class="columns is-centered" id='button_sec'>
+					<div class="column is-one-quarter">
+						<input id='house_addr_submit' class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
+					</div>
+					<div class="column is-one-quarter">
+						<a class="button is-fullwidth  is-small is-rounded is-danger" href="">Cancel</a>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="column ">
+			<div class="columns is-centered">
+				<div class="column is-two-thirds has-background-white-ter">
+					<div id='geocoder' class="geocoder"></div>
+				</div>
+			</div>
+			<progress class="progress is-danger" max="100">80%</progress>
+			<div id='map' style='width: 40vw; height: 45vh;'></div>
+		</div>
+	</div>
+	<div class="columns" id="second_div">
+		<div class="column" id='house_has'>
+			
+		</div>
+		<div class="column" id='amenities'>
+			
+		</div>
+	</div>
+	<div class="columns" id="third_div">
+	</div>
+	<div class="columns" id='fourth_div'>
 		
 	</div>
-	<div class="column" id='amenities'>
-		
-	</div>
-</div>
-<div class="columns" id="third_div">
-</div>
-<div class="columns" id='fourth_div'>
-	
 </div>
 <style type="text/css">
 	.geocoder {

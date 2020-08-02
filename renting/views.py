@@ -2,6 +2,8 @@ from django.shortcuts import render, reverse
 from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 from .forms import SearchForm, RentalHouseForm, HouseHasForm, AmenitiesForm, RulesForm, PreferredTenantForm
 from .models import NewRentalHouse, HouseHas, Amenities, PreferredTenant, Rules
@@ -17,56 +19,75 @@ def test_home(request):
 
 
 def renting_house_results(request):
+	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
 	if request.method == 'POST':
 		place = (request.POST['place']).replace('#','')
-
 		url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/'+place+'.json?access_token=pk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYm80c2E5NjFnemcycXM0YXE3cTZmaWwifQ.RUzXxKHAH_vuUSs0hc4t7g&limit=1'
 		response = requests.get(url)
 		json_resp = response.json()
-		# print(json_resp)
 		cord = json_resp['features'][0]['center']
 		cord = str(cord[0])+','+str(cord[1])
 		request.session['cord'] = cord
 		place_name = (json_resp['features'][0]['place_name']).split(',')[0]
-		# print(place_name)
 
 		house_list = NewRentalHouse.objects.filter(city=place_name)
-
 		features = []
+		houses_list = []
+				
 
-		for hous_obj in house_list:
+		if house_list:
+			# print('satisfied')
+			for hous_obj in house_list:
 
-			item = [
-			    {
-			      "type": "Feature",
-			      "geometry": {
-			        "type": "Point",
-			        "coordinates": [
-			          hous_obj.longitude,
-			          hous_obj.latitude
-			        ]
-			      },
-			      "properties": {
-			      	'house_no':hous_obj.house_no,
-			        "street_address":hous_obj.street_address,
-			        "postalCode": hous_obj.zipcode,
-			        "city": hous_obj.city,
-			        "country": hous_obj.country,
-			      }
-			    }
-			]
-			features.append(item)
+				item = {
+				      "type": "Feature",
+				      "geometry": {
+				        "type": "Point",
+				        "coordinates": [
+				          hous_obj.longitude,
+				          hous_obj.latitude
+				        ]
+				      },
+				      "properties": {
+				      	'house_no':hous_obj.house_no,
+				        "street_address":hous_obj.street_address,
+				        "postalCode": hous_obj.zipcode,
+				        "city": hous_obj.city,
+				        "country": hous_obj.country,
+				      }
+				    }
+				house = {
+					'house_no':hous_obj.house_no,
+					'street_address':hous_obj.street_address,
+					'zipcode':hous_obj.zipcode,
+					'city':hous_obj.city,
+					'country':hous_obj.country
+				}
 
-		house = {
-			"type": "FeatureCollection",
-			"features":features
-  		}
-		house = json.dumps(house, cls=DjangoJSONEncoder)
-		# print(hous_obj.longitude,hous_obj.latitude)
+				features.append(item)
+				houses_list.append(house)
+
+			house = {
+				"type": "FeatureCollection",
+				"features":features
+	  		}
+			house = json.dumps(house, cls=DjangoJSONEncoder)
+
+		else:
+			# print('Else is executing')
+			house = {
+				"type": "FeatureCollection",
+				"features":None
+	  		}
+			house = json.dumps(house, cls=DjangoJSONEncoder)
+			
+			# return HttpResponseRedirect(reverse('renting:disp'))
+			return render(request, 'renting/renting_house_results.html', locals())
+
 
 	else:
 		cord = request.session.get('cord', '21.01,52.22')
-	# 	print(cord)
+
 	
 	return render(request,'renting/renting_house_results.html', locals())
 
@@ -74,8 +95,10 @@ def renting_house_results(request):
 
 
 # Make it as only post
+@login_required
 def post_rent_ad(request):
 	form = RentalHouseForm(initial={'country':'Poland'}, data=request.POST or None)
+	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
 	if request.method == 'POST':
 		if form.is_valid():
 			rh_obj = form.save()
@@ -103,8 +126,9 @@ def post_rent_ad(request):
 
 	else:
 		return render(request, 'renting/rental_post.html', locals())
-
+@login_required
 def update_rent_ad(request, id):
+
 	try:
 		rh_obj = NewRentalHouse.objects.get(pk=id)
 		form = RentalHouseForm(data=request.POST or None, instance=rh_obj)
@@ -129,9 +153,9 @@ def update_rent_ad(request, id):
 			}
 			return JsonResponse(data, status=404)
 
-	# else:
+	else:
 
-	# 	return
+		return HttpResponse('object not found')
 
 
 	
@@ -312,8 +336,9 @@ def save_pt(request, id):
 		else:
 			print(pt_form.errors)	
 
-
+@login_required
 def edit_whole(request, id):
+	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
 	try:
 		nrh_obj = NewRentalHouse.objects.get(pk=id)
 		hh_fobj = HouseHas.objects.filter(nrh=nrh_obj)
@@ -356,7 +381,7 @@ def edit_whole(request, id):
 
 	return render(request, 'renting/rental_post_edit.html', locals())
 
-
+@login_required
 def delete_whole(request, id):
 	try:
 		nrh_obj = NewRentalHouse.objects.get(pk=id)
@@ -379,7 +404,7 @@ def zipcode_validate(request):
 		zip_obj = pl_zip.query_postal_code(request.GET['zipcode'])
 		# print(zip_obj, request.GET['zipcode'])
 		cond = pandas.isna(zip_obj.community_name)
-		print(zip_obj)
+		# print(zip_obj)
 	except:
 		zip_obj = None
 
@@ -387,13 +412,13 @@ def zipcode_validate(request):
 		data = {
 		'city' : zip_obj.community_name
 		}
-		print(zip_obj.community_name)
+		# print(zip_obj.community_name)
 		return JsonResponse(data)
 
 	else:
 		error = {
 		 'zipcode':'Enter a valid ZipCode'
 		}
-		print(type(error))
+		# print(type(error))
 		return JsonResponse(error, status=404)
 

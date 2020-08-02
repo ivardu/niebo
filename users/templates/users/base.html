@@ -4,6 +4,7 @@
 <head>
 	<title>Niebo</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+
    	<!-- MapBox GL - CSS -->
 	<link href='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css' rel='stylesheet' />
 	<link
@@ -24,83 +25,114 @@
 	<script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
 	<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
 
+
 	<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://kit.fontawesome.com/0d12e37eba.js" crossorigin="anonymous"></script>
 
 </head>
-<body>
-	<section class="hero is-fullheight">
-
-		<div class="hero-head">
-			<nav class="navbar" role="navigation" aria-label="main navigation">
-			  <div class="navbar-brand nb-lg">
-			    <a class="navbar-item" href="">
-			      <img src="{% static '/img/niebo-logo.png' %}">
-			    </a>
-			    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-			      <span aria-hidden="true"></span>
-			      <span aria-hidden="true"></span>
-			      <span aria-hidden="true"></span>
-			    </a>
-			  </div>
-
-			  <div id="navbarBasicExample" class="navbar-menu">
-			    <div class="navbar-start">
-		<!-- 	      <a class="navbar-item">
-			        Home
-			      </a>
-
-			      <a class="navbar-item">
-			        Documentation
-			      </a> -->
-
-		<!-- 	      <div class="navbar-item has-dropdown is-hoverable">
-			        <a class="navbar-link">
-			          More
-			        </a>
-
-			        <div class="navbar-dropdown">
-			          <a class="navbar-item">
-			            About
-			          </a>
-			          <a class="navbar-item">
-			            Jobs
-			          </a>
-			          <a class="navbar-item">
-			            Contact
-			          </a>
-			          <hr class="navbar-divider">
-			          <a class="navbar-item">
-			            Report an issue
-			          </a>
-			        </div>
-			      </div> -->
-			    </div>
-
-			    <div class="navbar-end nb-end">
-			      <div class="navbar-item">
-			        <div class="buttons">
-			          <a class="button is-primary">
-			            <strong>Sign up</strong>
-			          </a>
-			          <a class="button is-light">
-			            Log in
-			          </a>
-			        </div>
-			      </div>
-			    </div>
-			  </div>
-			</nav>
+<body id='mn-bd' class="has-navbar-fixed-top">
+	<div class="modal" id='lgn-mod'>
+		<div class="modal-background"></div>
+		<div class="modal-content">
+	    <!-- Any other Bulma elements you want -->
+		    <div class="box" id='mc-id'>
+		    	<div class="modal-card-body">
+				    <div class="lg-col">
+				    	<div class="lg-btn">
+				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Sign In to <span class="has-text-weight-medium">niebo</span></h6>
+				    	</div>
+				<!--     </div>
+				    <div class="lg-col columns is-half is-centered is-multiline"> -->
+				    	<div class="lg-btn ">
+				    		<button class="button g"><a href="{% url 'social:begin' 'google-oauth2' %}"><i class="fab fa-google"></i> Login with Google</a></button>
+				    	</div>
+				    	<div class="lg-btn">
+				    		<button class="button"><a href="{% url 'social:begin' 'facebook' %}"><i class="fab fa-facebook-f"></i> Login with Facebook</a></button>
+				    	</div>
+					</div>
+				</div>
+	    	</div>
 		</div>
+	  <button class="modal-close is-large" aria-label="close"></button>
+	</div>
+	<nav id='navbar-shadow' class="navbar is-fixed-top is-fullheight-with-navbar" role="navigation" aria-label="main navigation">
+		  <div class="navbar-brand nb-lg">
+		    <a class="navbar-item" href="{% url 'renting:home' %}">
+		      <img src="{% static '/img/niebo-logo.png' %}">
+		    </a>
+		    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+		      <span aria-hidden="true"></span>
+		      <span aria-hidden="true"></span>
+		      <span aria-hidden="true"></span>
+		    </a>
+		  </div>
 
+		  <div id="navbarBasicExample" class="navbar-menu">
+		    <div class="navbar-start">
+		    	{% block navbar %}
+	<!-- 	      <a class="navbar-item">
+		        Home
+		      </a>
 
-		<div class="hero-body has-background-grey-lighter">
-			<div class="container" id='bdy-ma'>
+		      <a class="navbar-item">
+		        Documentation
+		      </a> -->
+
+	<!-- 	      <div class="navbar-item has-dropdown is-hoverable">
+		        <a class="navbar-link">
+		          More
+		        </a>
+
+		        <div class="navbar-dropdown">
+		          <a class="navbar-item">
+		            About
+		          </a>
+		          <a class="navbar-item">
+		            Jobs
+		          </a>
+		          <a class="navbar-item">
+		            Contact
+		          </a>
+		          <hr class="navbar-divider">
+		          <a class="navbar-item">
+		            Report an issue
+		          </a>
+		        </div>-->
+		        {% endblock navbar%}
+		      </div> 
+		    </div>
+
+		    <div class="navbar-end nb-end">
+		      <div class="navbar-item">
+		        <div class="buttons">
+		        {% if user.is_authenticated %}
+		          <a class="button is-light" href="{% url 'logout' %}">
+		            Log Out
+		          </a>
+		        {% else %}
+		        <a class="button is-primary" href="{% url 'logout' %}">
+		            <strong>Sign up</strong>
+		        </a>
+		        <a id='lgn' class="button is-light" href="{% url 'social:begin' 'google-oauth2' %}">
+		            Log in
+		        </a>
+		        {% endif %}
+		        </div>
+		      </div>
+		    </div>
+		  </div>
+		</nav>
+
+	<section id='sec-id' class="hero is-fullheight">
+
+		<div class="hero-body ">
+			<!-- <div class="container" id='bdy-ma'> -->
 				{% block body %}
 
 				{% endblock %}
-			</div>
+			<!-- </div> -->
 		</div>
 		<div class="hero-foot">
 			
