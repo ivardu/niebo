@@ -22,7 +22,7 @@
 			<div class="columns is-multiline" id="rhd-plc">
 				{% if houses_list %}
 					{% for house in houses_list %}
-					<div class="column is-half box hsrs">
+					<div class="column is-half box hsrs" id="house-{{house.id}}">
 						<p class="title is-6">#{{house.house_no}},</p>
 						<p class="subtitle is-6">{{house.street_address}}, {{house.zipcode}}, {{house.city}},
 						{{house.country}}</p>
@@ -30,12 +30,12 @@
 						<!-- <p class="subtitle is-6">{{house.street_address}},</p>
 						<p class="subtitle is-6">{{house.zipcode}}, {{house.city}}</p>
 						<p class="subtitle is-6">{{house.country}}</p> -->
-						<img class="img-cls" src="{% static 'img/hmm-1.png'%}">
+						<img class="img-cls" src="{%static 'img/house-img1.jpg' %}">
 							
 					</div>
 					{% endfor %}
 				{% else %}
-				<div class="box column is-full">Results not found for the city you are looking for try other city</div>
+				<div class="box column is-full">Results not found for the city you are looking for.. try for other city</div>
 				{% endif %}
 			</div>
 			
@@ -115,16 +115,20 @@
 		
 		// var houses = houses;
 		if(houses.features){
-			houses.features.forEach(function(house, i){
-				house.properties.id=i;
-			});
+			// houses.features.forEach(function(house, i){
+			// 	house.properties.id=i;
+			// });
+			
 
 		map.on('load', function(e){
 			map.addSource("places", {
 	        	"type": "geojson",
 	        	"data": houses
         	});
+
+        	buildLocationList(houses);
         	addMarkers();
+        	
 		});
 
 
@@ -154,55 +158,68 @@
 					if (activeItem[0]) {
 					  activeItem[0].classList.remove('active');
 					}
-					// var listing = document.getElementById('listing-' + marker.properties.id);
-					// listing.classList.add('active');
+					var house = document.getElementById('house-' + marker.properties.id);
+					house.classList.add('active');
 				});
 			});
 		}
 
-		map.on('click', function(e) {
-			/* Determine if a feature in the "locations" layer exists at that point. */ 
-			var features = map.queryRenderedFeatures(e.point, {
-			layers: ['locations']
+		
+		function buildLocationList(data) {
+			data.features.forEach(function(house, i){
+				var prop = house.properties;
+				// console.log(house);
+				// console.log(prop);
+				// console.log($('#'+'house-'+prop.id+'').attr('id'));
+				var house_link = document.getElementById('house-' + prop.id);
+				// console.log(house_link);
+
+				house_link.addEventListener('click', function(e){
+					
+					for (var i=0; i < data.features.length; i++) {
+					if (this.id === 'house-'+data.features[i].properties.id) {
+						
+					var clickedListing = data.features[i];
+					flyToStore(clickedListing);
+					createPopUp(clickedListing);
+					}
+				}
+				var activeItem = document.getElementsByClassName('active');
+				if (activeItem[0]) {
+					activeItem[0].classList.remove('active');
+				}
+				this.parentNode.classList.add('active');
+	 			});
 			});
+    	}
 
-			/* If yes, then: */
-			if (features.length) {
-			var clickedPoint = features[0];
 
-			/* Fly to the point */
-			flyToStore(clickedPoint);
+		map.on('click', function(e) {
+				/* Determine if a feature in the "locations" layer exists at that point. */ 
+				var features = map.queryRenderedFeatures(e.point, {
+				layers: ['locations']
+				});
 
-			/* Close all other popups and display popup for clicked store */
-			createPopUp(clickedPoint);
+				/* If yes, then: */
+				if (features.length) {
+				var clickedPoint = features[0];
 
-			/* Highlight listing in sidebar (and remove highlight for all other listings) */
-			var activeItem = document.getElementsByClassName('active');
-			if (activeItem[0]) {
-			  activeItem[0].classList.remove('active');
-			}
-			// var listing = document.getElementById('listing-' + clickedPoint.properties.id);
-			// listing.classList.add('active');
-			}
+				/* Fly to the point */
+				flyToStore(clickedPoint);
+
+				/* Close all other popups and display popup for clicked store */
+				createPopUp(clickedPoint);
+
+				/* Highlight listing in sidebar (and remove highlight for all other listings) */
+				var activeItem = document.getElementsByClassName('active');
+				if (activeItem[0]) {
+				  activeItem[0].classList.remove('active');
+				}
+				var listing = document.getElementById('listing-' + clickedPoint.properties.id);
+				listing.classList.add('active');
+				}
 		});
-		// console.log(houses)
 
-		// map.on('load', function (e) {
-		//   /* Add the data to your map as a layer */
-		// map.addLayer({
-		//     "id": "locations",
-		//     "type": "symbol",
-		//      Add a GeoJSON source containing place coordinates and information. 
-		//     "source": {
-		//       "type": "geojson",
-		//       "data": houses
-		//     },
-		//     "layout": {
-		//       "icon-image": "restaurant-15",
-		//       "icon-allow-overlap": true,
-		//     }
-		//   });
-		// });
 
 		      /**
        * Use Mapbox GL JS's `flyTo` to move the camera smoothly
@@ -223,8 +240,8 @@
 		if (popUps[0]) popUps[0].remove();
 		var popup = new mapboxgl.Popup({closeOnClick: false})
 		.setLngLat(currentFeature.geometry.coordinates)
-		.setHTML('<h3>Sweetgreen</h3>' +
-		'<h4>' + currentFeature.properties.house_no + '</h4>')
+		.setHTML('<h3>#'+currentFeature.properties.house_no+'</h3>' +
+		'<h4>' + currentFeature.properties.street_address +','+currentFeature.properties.postalCode+','+currentFeature.properties.city+'</h4>')
 		.addTo(map);
 	}
 	}

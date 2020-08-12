@@ -3,7 +3,7 @@
 
 {% if nrh_obj %}
 <div class="container">
-<div class="modal">
+<div class="modal" id='del-cncl'>
 	<div class="modal-background"></div>
 	<div class="modal-content">
     <!-- Any other Bulma elements you want -->
@@ -444,6 +444,17 @@ min-width: 100%;
 margin-top: 1rem;
 }
 </style>
+<script type="text/javascript">
+		$(function(){
+		var modl = '{{modl}}'
+		if(modl){
+			$('#cmpl-lgn-mod').attr('class','modal is-active');
+		}
+		else{
+			console.log('failed');
+		}
+	});
+</script>
 <script type="text/javascript">
 	$(function(){
 	mapboxgl.accessToken = 

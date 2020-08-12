@@ -1,13 +1,42 @@
 {% extends 'users/base.html' %}
+{% load static %}
+{% block navbar %}
+<div class="navbar-item">
+	<h6 class="title wlc-title">You are few steps away to pick your desired home or post the rent ad without any charges. Welcome to Niebo..!!</h6>
+</div>
+
+{% endblock navbar %}
 {% block body %}
 <div class="container">
-	<div class="columns">
+	<!-- <div> -->
+		<!-- <h6 class="title">Welcome to the paradise..!!</h6> -->
+	<!-- </div> -->
+	<div id="carousel-demo" class="carousel">
+		<div class="item-1">
+			<img class='hm-img' src="{%static 'img/house-img1.jpg' %}">
+		</div>
+		<div class="item-2">
+			<img class='hm-img' src="{%static 'img/house-img2.jpg' %}">
+		</div>
+		<div class="item-3">
+			<img class='hm-img' src="{%static 'img/house-img3.jpg' %}">
+		</div>
+	</div>
+	<div class="columns mt-1 is-centered">
+		<div class="column is-one-third">
+			<button id='tenet' class="button is-medium is-fullwidth is-warning">I'm a Tenant</button>
+		</div>
+		<div class="column is-one-third">
+			<button id='owner' class="button is-medium is-fullwidth is-warning">I'm a House Owner</button>
+		</div>
+	</div>
+	<div class="columns" id='srch-bar'>
 		<div class="column">
 			<!-- <div class=""> -->
 				<form id='rental-search' class="" method="post" action="{% url 'renting:disp' %}">
 					{% csrf_token %}
 					<div class="columns is-centered">
-	  					<div id='geocoder' class="column is-one-third pd-geo"></div>
+	  					<div id='geocoder' class="column is-two-fifth pd-geo"></div>
 	  					<div class="column">
 	  						<div class="columns">
 			  					<div class="column">
@@ -45,12 +74,34 @@
 	geocoder.addTo('#geocoder');
 	$(function(){
 		$('.mapboxgl-ctrl-geocoder--input').attr('name','place');	
-		console.log($('mapboxgl-ctrl-geocoder--input'));
+		$('.mapboxgl-ctrl-geocoder').css('max-width','none');
 	});
-	
+			
 
 
-	
+	$(function(){
+		// Initialize all div with carousel class
+		// var carousels = bulmaCarousel.attach('.carousel', {'autoplay':true, 'slidesToShow':1, 'effect':'translate', 'loop':true, 'navigation':false});
+
+		// // Loop on each carousel initialized
+		// for(var i = 0; i < carousels.length; i++) {
+		// 	// Add listener to  event
+		// 	carousels[i].on('before:show', state => {
+		// 		// console.log(state);
+		// 	});
+		// }
+
+		// // Access to bulmaCarousel instance of an element
+		// var element = document.querySelector('#my-element');
+		// if (element && element.bulmaCarousel) {
+		// 	// bulmaCarousel instance is available as element.bulmaCarousel
+		// 	element.bulmaCarousel.on('before-show', function(state) {
+		// 		console.log(state);
+		// 	});
+		// }
+
+		bulmaCarousel.attach('#carousel-demo', {'navigation':false, 'autoplay':true, 'effect':'translate', 'infinite':true });
+	});
 </script>
 
 </div>

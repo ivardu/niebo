@@ -122,8 +122,8 @@ body.has-navbar-fixed-top{
 	padding-top: 0rem;
 }
 img.img-cls{
-	width: 10rem;
-	height: 10rem;
+	width: 21rem;
+	height: 12rem;
 }
 .column.hsrs{
 	margin-bottom: 0.25rem;
@@ -190,4 +190,35 @@ img.img-cls{
 .g{
 	padding-left: 1.25rem;
 	padding-right:1.25rem; 
+}
+
+.hsrs{
+	cursor: pointer;
+
+}
+.hsrs:hover{
+	/*background: white;*/
+	box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
+}
+
+#srch-bar{
+	display: none;
+}
+
+.hm-img{
+	width: 100vw;
+	height: 50vh;
+	/*margin: auto;*/
+}
+#carou{
+	/*min-width: 100vw;*/
+	min-height: 80vh;
+	margin-left: auto;
+	margin-right: auto; 
+	/*margin: auto;*/
+}
+
+.wlc-title{
+	font-family: 'Raleway', sans-serif;
+	font-size: 1.2rem;
 }

@@ -337,17 +337,21 @@ $(function(){
 	$('#md-cncl, .modal-close').on('click',function(event){
 		event.preventDefault();
 		$('.modal').attr('class','modal');
+		if($('#tenet')){
+			$('#tenet').removeClass('is-light');
+		}
 	});
 
 	// $('#mc-id').on('blur')
 
-	$('.modal').mouseup(function(e){
+	$('#lgn-mod, #del-cncl').mouseup(function(e){
 		// console.log('heree..');
 		var mod = $('#mc-id');
 		if (!mod.is(e.target) && mod.has(e.target).length === 0){
 			// console.log('clicked')
 			// $('.modal').hide();
 			$('.modal').attr('class','modal');
+			$('#tenet').removeClass('is-light');
 			// mod.off('click');
 		}
 	});
@@ -394,5 +398,22 @@ $(function(){
 	
 
 });
+
+$(function(){
+	$('#tenet').on('click', function(){
+		$('#srch-bar').show();
+		$('#owner').addClass('is-light')
+	})
+	$('#owner').on('click',function(){
+		$('#owner').removeClass('is-light');
+		$('#srch-bar').hide();
+		// console.log('...?')
+		// console.log($('#tit-neibo'));
+		$('#tit-neibo').text('niebo to post your rent ad..!!')
+		// $('owner').addClass('is-warning');
+		$('#tenet').addClass('is-light');
+		$('#lgn-mod').attr('class','modal is-active');
+	})
+})
 
 // .off('click');

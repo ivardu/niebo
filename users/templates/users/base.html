@@ -16,11 +16,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
 	<!-- Bulma-Calendar CSS -->
 	<link rel="stylesheet" type="text/css" href="{% static 'css/bulma-calendar.min.css' %}">
+	<!-- Bulma-carousel -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/css/bulma-carousel.min.css">
 	<!-- Custom CSS -->
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
+	<!-- Google fonts --> 
+	<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200&display=swap" rel="stylesheet"> 
 	<script type="text/javascript" src="{% static 'js/bulma-calendar.min.js' %}"></script>
 	<script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
 	<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
@@ -30,6 +33,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://kit.fontawesome.com/0d12e37eba.js" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/js/bulma-carousel.min.js"></script>
 
 </head>
 <body id='mn-bd' class="has-navbar-fixed-top">
@@ -41,7 +45,7 @@
 		    	<div class="modal-card-body">
 				    <div class="lg-col">
 				    	<div class="lg-btn">
-				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Sign In to <span class="has-text-weight-medium">niebo</span></h6>
+				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Sign In to <span class="has-text-weight-medium" id='tit-neibo'>niebo</span></h6>
 				    	</div>
 				    	<div class="lg-btn">
 				    		<a class="button g has-text-link" href="{% url 'social:begin' 'google-oauth2' %}"><span class="px-1"><i class="fab fa-google"></i></span>Login with Google</a>
@@ -54,6 +58,27 @@
 	    	</div>
 		</div>
 	  <button class="modal-close is-large" aria-label="close"></button>
+	</div>
+	<div class="modal" id='cmpl-lgn-mod'>
+		<div class="modal-background"></div>
+		<div class="modal-content">
+	    <!-- Any other Bulma elements you want -->
+		    <div class="box" id='mc-id'>
+		    	<div class="modal-card-body">
+				    <div class="lg-col">
+				    	<div class="lg-btn">
+				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Sign In to <span class="has-text-weight-medium" id='tit-neibo'>niebo</span></h6>
+				    	</div>
+				    	<div class="lg-btn">
+				    		<a class="button g has-text-link" href="{% url 'social:begin' 'google-oauth2' %}"><span class="px-1"><i class="fab fa-google"></i></span>Login with Google</a>
+				    	</div>
+				    	<div class="lg-btn">
+				    		<a class="button has-text-link" href="{% url 'social:begin' 'facebook' %}"><span class="px-1"><i class="fab fa-facebook-f"></i></span>Login with Facebook</a>
+				    	</div>
+					</div>
+				</div>
+	    	</div>
+		</div>
 	</div>
 	<nav id='navbar-shadow' class="navbar is-fixed-top is-fullheight-with-navbar" role="navigation" aria-label="main navigation">
 		  <div class="navbar-brand nb-lg">
@@ -82,7 +107,7 @@
 		        <a class="navbar-link">
 		          More
 		        </a>
-
+				
 		        <div class="navbar-dropdown">
 		          <a class="navbar-item">
 		            About
@@ -98,6 +123,7 @@
 		            Report an issue
 		          </a>
 		        </div>-->
+		        
 		        {% endblock navbar%}
 		      </div> 
 		    </div>
@@ -122,9 +148,9 @@
 		    </div>
 		  </div>
 		</nav>
-
-	<section id='sec-id' class="hero is-fullheight">
-
+	<section id='sec-id' class="hero is-fullheight has-carousel">
+			{% block carousel %}
+			{% endblock carousel %}
 		<div class="hero-body ">
 			<!-- <div class="container" id='bdy-ma'> -->
 				{% block body %}

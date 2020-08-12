@@ -38,7 +38,7 @@ def renting_house_results(request):
 		if house_list:
 			# print('satisfied')
 			for hous_obj in house_list:
-
+				print(hous_obj.id)
 				item = {
 				      "type": "Feature",
 				      "geometry": {
@@ -49,6 +49,7 @@ def renting_house_results(request):
 				        ]
 				      },
 				      "properties": {
+				      	'id':hous_obj.id,
 				      	'house_no':hous_obj.house_no,
 				        "street_address":hous_obj.street_address,
 				        "postalCode": hous_obj.zipcode,
@@ -61,7 +62,8 @@ def renting_house_results(request):
 					'street_address':hous_obj.street_address,
 					'zipcode':hous_obj.zipcode,
 					'city':hous_obj.city,
-					'country':hous_obj.country
+					'country':hous_obj.country,
+					'id':hous_obj.id
 				}
 
 				features.append(item)
@@ -95,11 +97,12 @@ def renting_house_results(request):
 
 
 # Make it as only post
-@login_required
+# @login_required
 def post_rent_ad(request):
 	form = RentalHouseForm(initial={'country':'Poland'}, data=request.POST or None)
 	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
-	if request.method == 'POST':
+	# print(request.user.is_authenticated)
+	if request.method == 'POST' and request.user.is_authenticated:
 		if form.is_valid():
 			rh_obj = form.save()
 			data = {'url':reverse_lazy('renting:house_amenities'),
@@ -124,38 +127,41 @@ def post_rent_ad(request):
 			# print(data)
 			return JsonResponse(data, status=409)
 
-	else:
+	elif request.user.is_anonymous:
+		modl = 'true'
 		return render(request, 'renting/rental_post.html', locals())
-@login_required
+
+
+# @login_required
 def update_rent_ad(request, id):
+	if request.user.is_authenticated:
+		try:
+			rh_obj = NewRentalHouse.objects.get(pk=id)
+			form = RentalHouseForm(data=request.POST or None, instance=rh_obj)
+		except:
+			rh_obj = None
 
-	try:
-		rh_obj = NewRentalHouse.objects.get(pk=id)
-		form = RentalHouseForm(data=request.POST or None, instance=rh_obj)
-	except:
-		rh_obj = None
+		if request.method == 'POST' and rh_obj:
+			if form.is_valid():
+				rh_obj = form.save()
+				data = {'url':reverse_lazy('renting:house_amenities'),
+					'id': rh_obj.id}
 
-	if request.method == 'POST' and rh_obj:
-		if form.is_valid():
-			rh_obj = form.save()
-			data = {'url':reverse_lazy('renting:house_amenities'),
-				'id': rh_obj.id}
+				return JsonResponse(data)
 
-			return JsonResponse(data)
+	######### You Need to Handle the Form Errors Too ########### 
 
-######### You Need to Handle the Form Errors Too ########### 
+			else:
+				# print(form.errors)
+				# print('errors')
+				data = {
+				 'error':'check djangoconsole'
+				}
+				return JsonResponse(data, status=404)
 
-		else:
-			# print(form.errors)
-			# print('errors')
-			data = {
-			 'error':'check djangoconsole'
-			}
-			return JsonResponse(data, status=404)
-
-	else:
-
-		return HttpResponse('object not found')
+	elif request.user.is_anonymous:
+		modl='true'
+		return HttpResponseRedirect(reverse('renting:edit_whole', args=(id,)))
 
 
 	
@@ -336,64 +342,68 @@ def save_pt(request, id):
 		else:
 			print(pt_form.errors)	
 
-@login_required
+# @login_required
 def edit_whole(request, id):
 	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
-	try:
-		nrh_obj = NewRentalHouse.objects.get(pk=id)
-		hh_fobj = HouseHas.objects.filter(nrh=nrh_obj)
-		a_fobj = Amenities.objects.filter(nrh=nrh_obj)
-		r_fobj = Rules.objects.filter(nrh=nrh_obj)
-		pt_fobj = PreferredTenant.objects.filter(nrh=nrh_obj)
+	if request.user.is_authenticated:
+		try:
+			nrh_obj = NewRentalHouse.objects.get(pk=id)
+			hh_fobj = HouseHas.objects.filter(nrh=nrh_obj)
+			a_fobj = Amenities.objects.filter(nrh=nrh_obj)
+			r_fobj = Rules.objects.filter(nrh=nrh_obj)
+			pt_fobj = PreferredTenant.objects.filter(nrh=nrh_obj)
 
-	except:
-		nrh_obj = None
-		# print(nrh_obj)
-	
-	if nrh_obj:
-		form = RentalHouseForm(instance=nrh_obj)
-		if hh_fobj:
-			hh_obj = hh_fobj[0]
-			hform = HouseHasForm(instance=hh_obj)
-		else:
-			hform = HouseHasForm()
-		if a_fobj:
-			a_obj = a_fobj[0]
-			aform = AmenitiesForm(instance=a_obj)
-		else:
-			aform = AmenitiesForm()
-		if r_fobj:
-			r_obj = r_fobj[0]
-			rform = RulesForm(instance=r_obj)
-		else:
-			rform = RulesForm()
-		if pt_fobj:
-			pt_obj = pt_fobj[0]
-			ptform = PreferredTenantForm(instance=pt_obj)
-		else:
-			ptform = PreferredTenantForm()
+		except:
+			nrh_obj = None
+			# print(nrh_obj)
+		
+		if nrh_obj:
+			form = RentalHouseForm(instance=nrh_obj)
+			if hh_fobj:
+				hh_obj = hh_fobj[0]
+				hform = HouseHasForm(instance=hh_obj)
+			else:
+				hform = HouseHasForm()
+			if a_fobj:
+				a_obj = a_fobj[0]
+				aform = AmenitiesForm(instance=a_obj)
+			else:
+				aform = AmenitiesForm()
+			if r_fobj:
+				r_obj = r_fobj[0]
+				rform = RulesForm(instance=r_obj)
+			else:
+				rform = RulesForm()
+			if pt_fobj:
+				pt_obj = pt_fobj[0]
+				ptform = PreferredTenantForm(instance=pt_obj)
+			else:
+				ptform = PreferredTenantForm()
 
 		# return render(request, 'renting/rental_post_edit.html', locals())
 
-	# else:
-	# 	return HttpResponse("Page")
-		# print(nrh_obj)
+	elif request.user.is_anonymous:
+		modl = 'true'
+		return render(request, 'renting/rental_post_edit.html', locals())
 
-	return render(request, 'renting/rental_post_edit.html', locals())
-
-@login_required
+# @login_required
 def delete_whole(request, id):
-	try:
-		nrh_obj = NewRentalHouse.objects.get(pk=id)
-	except:
-		nrh_obj = None
+	if request.user.is_authenticated:
+		try:
+			nrh_obj = NewRentalHouse.objects.get(pk=id)
+		except:
+			nrh_obj = None
 
-	if nrh_obj:
-		nrh_obj.delete()
-		return HttpResponseRedirect(reverse('renting:post_rent_ad'))
+		if nrh_obj:
+			nrh_obj.delete()
+			return HttpResponseRedirect(reverse('renting:post_rent_ad'))
 
-	else:
-		return HttpResponse('Error')
+		# Need to handle the error for exception - object doesn't exists
+
+
+	elif request.user.is_anonymous:
+		modl='true'
+		return HttpResponseRedirect(reverse('renting:edit_whole', args=(id,)))
 
 
 
