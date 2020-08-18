@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'renting.apps.RentingConfig',
     'users.apps.UsersConfig',
     'social_django',
-    'storages',
 ]
 
 MIDDLEWARE = [
