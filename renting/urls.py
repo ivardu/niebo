@@ -3,7 +3,8 @@ from renting import views as rt
 
 app_name='renting'
 urlpatterns = [
-	path('', rt.test_home, name='home'),
+	path('', rt.home_page, name='home'),
+	path('sign/',rt.user_signin_status, name='sgn_status'),
 	path('disp/', rt.renting_house_results, name='disp'),
 	path('post_ad/', rt.post_rent_ad, name='post_rent_ad'),
 	path('update_ad/<int:id>/', rt.update_rent_ad, name='update_rent_ad'),
@@ -16,4 +17,5 @@ urlpatterns = [
 	path('edw/<int:id>/', rt.edit_whole, name='edit_whole'),
 	path('dlw/<int:id>/', rt.delete_whole, name='del_whole'),
 	path('zp/', rt.zipcode_validate, name='validate_zip'),
+	path('hd/<int:id>/', rt.house_details, name='house_details'),
 ]

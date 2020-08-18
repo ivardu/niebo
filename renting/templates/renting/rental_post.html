@@ -38,7 +38,7 @@
 					<button id='ha-sa' type='submit' class="button is-small is-primary">Save</button>
 				</div>
 			</div>
-			<form method="post" id="house_addr" action="{% url 'renting:post_rent_ad' %}">
+			<form method="post" id="house_addr" action="{% url 'renting:post_rent_ad' %}" enctype="multipart/form-data">
 				{% csrf_token %}
 				<div class="columns">
 					<div class="column" id='hh_no'>
@@ -103,6 +103,13 @@
 						{{form.latitude.errors}}
 						{{form.latitude.label}}
 						{{form.latitude}}
+					</div>
+				</div>
+				<div class="columns">
+					<div class="column">
+						{{form.images.errors}}
+						{{form.images.label}}
+						{{form.images}}
 					</div>
 				</div>
 				<div class="columns is-centered" id='button_sec'>
@@ -181,6 +188,7 @@ margin-top: 1rem;
 	var geocoder = new MapboxGeocoder({
 		accessToken:mapboxgl.accessToken,
 		mapboxgl:mapboxgl,
+		placeholder:'Search for the place to update co-ordinates',
 		marker:false
 	})
 	// Adding the geocoder result to the map

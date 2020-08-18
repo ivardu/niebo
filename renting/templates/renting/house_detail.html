@@ -1,0 +1,152 @@
+{% extends 'users/base.html' %}
+{% load static %}
+{% block body %}
+<div class="container">
+	<div class="modal" id='cmpul-lgn-mod'>
+		<div class="modal-background"></div>
+		<div class="modal-content">
+	    <!-- Any other Bulma elements you want -->
+		    <div class="box" id='mc-id'>
+		    	<div class="modal-card-body">
+				    <div class="lg-col">
+				    	<div class="lg-btn">
+				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Sign In to <span class="has-text-weight-medium" id='tit-neibo'>niebo</span>to view more about house details</h6>
+				    	</div>
+				    	<div class="lg-btn">
+				    		<a class="button g has-text-link" href="{% url 'social:begin' 'google-oauth2' %}?next={{request.path}}"><span class="px-1"><i class="fab fa-google"></i></span>Login with Google</a>
+				    	</div>
+				    	<div class="lg-btn">
+				    		<a class="button has-text-link" href="{% url 'social:begin' 'facebook' %}"><span class="px-1"><i class="fab fa-facebook-f"></i></span>Login with Facebook</a>
+				    	</div>
+					</div>
+				</div>
+	    	</div>
+		</div>
+	</div>
+	<div class="columns">
+		<img class="hs-img" src="{{nrh_obj.images.url}}">
+	</div>
+	<h3 class="subtitle"><span class="til">House Has</span></h3>
+	<div class="columns is-multiline box">
+
+			<div class="column is-one-quarter">
+				<span>Bedroom: <span class="sub-txt">{{r_hh.bedroom}}</span></span>
+			</div>
+			<div class="column is-one-quarter">
+				<span>LivingRoom: {% if r_hh.living_room == 'Pr' %}<span class="sub-txt">Private</span>{%elif r_hh.living_room == 'Sh'%}<span class="sub-txt">Public</span>{%else%}<span>Not Available</span>{%endif%}</span>
+			</div>
+			<div class="column is-one-quarter">
+				<span>Toilet: {% if r_hh.toilet == 'Pr' %}<span class="sub-txt">Private</span>{%elif r_hh.toilet == 'Sh'%}<span class="sub-txt">Public</span>{%else%}<span>Not Available</span>{%endif%}</span>
+			</div>
+			<div class="column is-one-quarter">
+				<span>Balcony: {% if r_hh.balcony == 'Pr' %}<span class="sub-txt">Private</span>{%elif r_hh.balcony == 'Sh'%}<span class="sub-txt">Public</span>{%else%}<span>Not Available</span>{%endif%}</span>
+			</div>
+			<div class="column is-one-quarter">
+				<span>{% if r_hh.terrace == 'Y' %}Terrace <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Terrace</span>{%endif%}</span>
+			</div>
+			<div class="column is-one-quarter">
+				<span>{% if r_hh.garden == 'Y' %}Garden <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Garden</span>{%endif%}</span>
+			</div>
+			<div class="column is-one-quarter">
+				<span>{% if r_hh.basement == 'Y' %}Basement <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Basement</span>{%endif%}</span>
+			</div>
+			<div class="column is-one-quarter">
+				<span>{% if r_hh.parking == 'Y' %}Parking <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Parking</span>{%endif%}</span>
+			</div>
+			<div class="column is-one-quarter">
+				<span>{% if r_hh.wheelchair_accessible == 'Y' %}WheelChair Access <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">WheelChair Access</span>{%endif%}</span>
+			</div>
+				<!-- <h6>{{hh_itm}}</h6> -->
+				
+			<!-- </div> -->
+
+	</div>
+	<h6 class="subtitle"><span class="til">Amenities</span></h6>
+	<div class="columns is-multiline box">
+		<div class="column is-one-quarter">
+			<span>{% if am.desk == 'Y' %}Desk <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Desk</span>{%endif%}</span>
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.closet == 'Y' %}Closet <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Closet</span>{%endif%}</span>
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.tv == 'Y' %}Tv <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Tv</span>{%endif%}</span>
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.washing_machine == 'Y' %}Waching Machine <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Washing Machine</span>{%endif%}</span>
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.dryer == 'Y' %}Dryer <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Dryer</span>{%endif%}</span>
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.dishwasher == 'Y' %}Dishwasher <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Dishwasher</span>{%endif%}</span>
+		</div>
+
+		<div class="column is-one-quarter">
+			<span>{% if am.kitchenware == 'Y' %}Kitchenware <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Kitchenware</span>{%endif%}</span>
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.wifi == 'Y' %}WiFi <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">WiFi</span>{%endif%}</span>
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.heating == 'Y' %}Heating <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Heating</span>{%endif%}</span>
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.air_conditioning == 'Y' %}Air Conditioning <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Air Conditioning</span>{%endif%}</span>
+			
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.bed == 'Y' %}Bed <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Bed</span>{%endif%}</span>
+		</div>
+		<div class="column is-one-quarter">
+			<span>{% if am.furnished == 'Y' %}Furnished <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Furnished</span>{%endif%}</span>
+		</div>
+
+	</div>
+	<h6 class="subtitle"><span class="til">Preferred Tenant</span></h6>
+	<div class="columns box">
+		<div class="column">
+			<span>Gender: <span class="sub-txt">{% if pt.gender == 'M' %}Male{%elif pt.gender == 'F' %}Female{%else%}Other{%endif%}</span></span>
+		</div>
+		<div class="column">
+			<span>{% if pt.couple_friendly == 'Y' %}Couple Friendly <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Couple Friendly</span>{%endif%}</span>
+		</div>
+		<div class="column">
+			<span>{% if pt.bachelor_allowed == 'Y' %}Bachelor Allowed <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Bachelor Allowed</span>{%endif%}</span>
+		</div>
+	</div>
+	<h6 class="subtitle"><span class="til">Rules</span></h6>
+	<div class="columns box">
+		<div class="column">
+			<span>{% if rl.animal_allowed == 'Y' %}Animal Allowed <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Animal Allowed</span>{%endif%}</span>
+		</div>
+		<div class="column">
+			<span>{% if rl.smoking_allowed == 'Y' %}Smoking Allowed <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Smoking Allowed</span>{%endif%}</span>
+		</div>
+		<div class="column">
+			<span>{% if rl.musical_instrument == 'Y' %}Musical Instrument <i class="fa fa-check" aria-hidden="true"></i>{%else%}<span class="lt">Musical Instrument</span>{%endif%}</span>
+		</div>
+	</div>
+	<h6 class="subtitle">Contact Details</h6>
+	<div class="columns">
+		<div class="column is-half">
+			<span><i class="fa fa-envelope" aria-hidden="true"> {{nrh_obj.user.email}}</i></span>
+		</div>
+		<div class="column is-half">
+			<span><i class="fa fa-phone-square" aria-hidden="true"> {% if nrh_obj.user.phone_no %}{{nrh_obj.user.phone_no}}{%else%}Not Available{%endif%}</i></span>
+		</div>
+	</div>
+	
+</div>
+<script type="text/javascript">
+		$(function(){
+		var modl = '{{modl}}'
+		if(modl){
+			$('#cmpul-lgn-mod').attr('class','modal is-active');
+		}
+		else{
+			console.log('failed');
+		}
+	});
+</script>
+{% endblock body %}

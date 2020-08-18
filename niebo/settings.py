@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os, django_heroku
 
+
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,7 +25,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'q)q1_p%&kmixpack7#e@ld8uis-tc6rr)h^3+(sc-=ocnym$h9'
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+
+# SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,9 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'renting.apps.RentingConfig',
     'users.apps.UsersConfig',
-    # # 'django.contrib.humanize',
-    # 'django.contrib.admindocs',
     'social_django',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -135,8 +138,24 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = '/media/'
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+#Default storage setting for the media fo niebo on GCP bucket 
+import sys
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+from niebo import gcloud
+
+DEFAULT_FILE_STORAGE = 'gcloud.GoogleCloudMediaFileStorage'
+
+MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_MEDIA_BUCKET_NAME)
+MEDIA_ROOT = "media/"
+
+
+
+#Mapbox-GSL private and publick keys for accessing the maps data
 MAPBOX_PRIVATE_KEY = os.environ.get('MAPBOX_PRIVATE_KEY')
 MAPBOX_PUBLIC_KEY = os.environ.get('MAPBOX_PUBLIC_KEY')
 

@@ -19,10 +19,13 @@ class RentalHouseForm(forms.ModelForm):
 
 	longitude = forms.DecimalField(widget=forms.NumberInput(attrs={'class':'input has-background-grey-lighter', 'placeholder':'Longitude','readonly':'readonly'}))
 	latitude = forms.DecimalField(widget=forms.NumberInput(attrs={'class':'input has-background-grey-lighter', 'placeholder':'Latitude','readonly':'readonly'}))
+
+	images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple':True}))
 	
 	class Meta:
 		model = NewRentalHouse
 		fields = '__all__'
+		exclude = ['user']
 
 
 	def __init__(self, *args, **kwargs):

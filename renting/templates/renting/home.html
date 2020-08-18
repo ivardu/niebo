@@ -29,10 +29,17 @@
 			<button id='tenet' class="button is-medium is-fullwidth is-warning">I'm a Tenant</button>
 		</div>
 		<div class="column is-one-third">
+			{% if user.is_authenticated %}
+			<a id='otner' class="button is-medium is-fullwidth is-warning" href="{% url 'renting:post_rent_ad' %}">I'm a House Owner</a>
+			{% else %}
 			<button id='owner' class="button is-medium is-fullwidth is-warning">I'm a House Owner</button>
+			{% endif %}
 		</div>
 	</div>
-	<div class="columns" id='srch-bar'>
+	<div class="columns is-multiline" id='srch-bar'>
+		<div class="column pd-geo">
+			<h6 class="subtitle is-5">Enter the city name where you are looking for the houses and pick the dates for when you want to move </h6>
+		</div>
 		<div class="column">
 			<!-- <div class=""> -->
 				<form id='rental-search' class="" method="post" action="{% url 'renting:disp' %}">
@@ -70,7 +77,8 @@
 	// });
 	var geocoder = new MapboxGeocoder({
 		accessToken:mapboxgl.accessToken,
-		mapboxgl:mapboxgl
+		mapboxgl:mapboxgl,
+		placeholder:'Search the City or Place name'
 	})
 	// document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
 	geocoder.addTo('#geocoder');
@@ -79,30 +87,31 @@
 		$('.mapboxgl-ctrl-geocoder').css('max-width','none');
 	});
 			
-
-
+	
 	$(function(){
-		// Initialize all div with carousel class
-		// var carousels = bulmaCarousel.attach('.carousel', {'autoplay':true, 'slidesToShow':1, 'effect':'translate', 'loop':true, 'navigation':false});
+		// bulma carousel settings
+		bulmaCarousel.attach('#carousel-demo', {'autoplay':true, 'infinite':true, });
+		// $('.mapboxgl-ctrl-geocoder').on('click', function(){
+		// 	// $('.mapboxgl-ctrl-geocoder').css()
+			
+		// 	$(this).css('box-shadow','0 1px 5px rgba(81, 203, 238, 1)');
 
-		// // Loop on each carousel initialized
-		// for(var i = 0; i < carousels.length; i++) {
-		// 	// Add listener to  event
-		// 	carousels[i].on('before:show', state => {
-		// 		// console.log(state);
-		// 	});
-		// }
+		$('#rt-srch').on('click',function(){
+			if($('.mapboxgl-ctrl-geocoder--input').val()==''){
+				$('.mapboxgl-ctrl-geocoder').append('<h6 class="mt-1 ml-1 has-text-danger">Place name cannot be empty</h6>');
+				$('.mapboxgl-ctrl-geocoder--input').css('box-shadow','0 0 5px 1px rgba(255, 0, 0, 1)');
+			}
+		})
 
-		// // Access to bulmaCarousel instance of an element
-		// var element = document.querySelector('#my-element');
-		// if (element && element.bulmaCarousel) {
-		// 	// bulmaCarousel instance is available as element.bulmaCarousel
-		// 	element.bulmaCarousel.on('before-show', function(state) {
-		// 		console.log(state);
-		// 	});
-		// }
+		$('.mapboxgl-ctrl-geocoder--input').on('keydown', function(){
+			$('html, body').animate({
+				'scrollTop': $('#geocoder').position().top
+			});
+			$('.mapboxgl-ctrl-geocoder--input').css('box-shadow','none');
+			$('.mapboxgl-ctrl-geocoder').find('h6').remove();
+		})
 
-		bulmaCarousel.attach('#carousel-demo', {'navigation':false, 'autoplay':true, 'effect':'translate', 'infinite':true });
+
 	});
 </script>
 

@@ -207,7 +207,7 @@ img.img-cls{
 
 .hm-img{
 	width: 100vw;
-	height: 50vh;
+	height: 70vh;
 	/*margin: auto;*/
 }
 #carou{
@@ -221,4 +221,32 @@ img.img-cls{
 .wlc-title{
 	font-family: 'Raleway', sans-serif;
 	font-size: 1.2rem;
+}
+.mapboxgl-ctrl-geocoder--input:focus{
+	box-shadow:0 1px 5px rgba(81, 203, 238, 1)
+}
+
+.ncr{
+	cursor: default;
+}
+
+.lt{
+	text-decoration: line-through;
+}
+
+.sub-txt{
+	font-size: 0.8rem;
+	background-color: #daebeb;
+}
+.hs-img{
+	width: 90vw;
+	height: 60vh;
+}
+
+.til{
+	/*background-color: #f0f0f0;*/
+	/*padding: 0.2rem;*/
+}
+.resul-txt{
+	font-size: 2rem;
 }

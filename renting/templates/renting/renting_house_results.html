@@ -23,19 +23,19 @@
 				{% if houses_list %}
 					{% for house in houses_list %}
 					<div class="column is-half box hsrs" id="house-{{house.id}}">
-						<p class="title is-6">#{{house.house_no}},</p>
-						<p class="subtitle is-6">{{house.street_address}}, {{house.zipcode}}, {{house.city}},
+						<p class="ncr title is-6">#{{house.house_no}},</p>
+						<p class="ncr subtitle is-6">{{house.street_address}}, {{house.zipcode}}, {{house.city}},
 						{{house.country}}</p>
 
 						<!-- <p class="subtitle is-6">{{house.street_address}},</p>
 						<p class="subtitle is-6">{{house.zipcode}}, {{house.city}}</p>
 						<p class="subtitle is-6">{{house.country}}</p> -->
-						<img class="img-cls" src="{%static 'img/house-img1.jpg' %}">
+						<a href="{% url 'renting:house_details' house.id %}?next={{request.path}}"><img class="img-cls" src="{%static 'img/house-img1.jpg' %}"></a>
 							
 					</div>
 					{% endfor %}
 				{% else %}
-				<div class="box column is-full">Results not found for the city you are looking for.. try for other city</div>
+				<div class="box column is-full resul-txt">Sorry..!! Results not found for the city you are looking for.. try for other city</div>
 				{% endif %}
 			</div>
 			
@@ -174,7 +174,7 @@
 				var house_link = document.getElementById('house-' + prop.id);
 				// console.log(house_link);
 
-				house_link.addEventListener('click', function(e){
+				house_link.addEventListener('mouseover', function(e){
 					
 					for (var i=0; i < data.features.length; i++) {
 					if (this.id === 'house-'+data.features[i].properties.id) {

@@ -11,11 +11,20 @@ import requests, pgeocode, pandas, json
 
 # url = reverse_lazy('renting:house_amenities')
 
-def test_home(request):
-	
-	form = SearchForm()
+def home_page(request):
 
+	form = SearchForm()
+	log = 'false'
 	return render(request, 'renting/home.html', locals())
+
+
+def user_signin_status(request):
+	if request.user.is_authenticated:
+		return JsonResponse({'user':'logged_in'})
+
+	elif request.user.is_anonymous:
+		return JsonResponse({'user':'not_logged_in'})
+
 
 
 def renting_house_results(request):
@@ -36,38 +45,46 @@ def renting_house_results(request):
 				
 
 		if house_list:
-			# print('satisfied')
 			for hous_obj in house_list:
-				print(hous_obj.id)
-				item = {
-				      "type": "Feature",
-				      "geometry": {
-				        "type": "Point",
-				        "coordinates": [
-				          hous_obj.longitude,
-				          hous_obj.latitude
-				        ]
-				      },
-				      "properties": {
-				      	'id':hous_obj.id,
-				      	'house_no':hous_obj.house_no,
-				        "street_address":hous_obj.street_address,
-				        "postalCode": hous_obj.zipcode,
-				        "city": hous_obj.city,
-				        "country": hous_obj.country,
-				      }
-				    }
-				house = {
-					'house_no':hous_obj.house_no,
-					'street_address':hous_obj.street_address,
-					'zipcode':hous_obj.zipcode,
-					'city':hous_obj.city,
-					'country':hous_obj.country,
-					'id':hous_obj.id
-				}
+				try:
+					rl = Rules.objects.get(nrh=hous_obj)
+					pt = PreferredTenant.objects.get(nrh=hous_obj)
+					am = Amenities.objects.get(nrh=hous_obj)
+					hh = HouseHas.objects.get(nrh=hous_obj)
+					proceed = True
+				except:
+					proceed = False
 
-				features.append(item)
-				houses_list.append(house)
+				if proceed:
+					item = {
+					      "type": "Feature",
+					      "geometry": {
+					        "type": "Point",
+					        "coordinates": [
+					          hous_obj.longitude,
+					          hous_obj.latitude
+					        ]
+					      },
+					      "properties": {
+					      	'id':hous_obj.id,
+					      	'house_no':hous_obj.house_no,
+					        "street_address":hous_obj.street_address,
+					        "postalCode": hous_obj.zipcode,
+					        "city": hous_obj.city,
+					        "country": hous_obj.country,
+					      }
+					    }
+					house = {
+						'house_no':hous_obj.house_no,
+						'street_address':hous_obj.street_address,
+						'zipcode':hous_obj.zipcode,
+						'city':hous_obj.city,
+						'country':hous_obj.country,
+						'id':hous_obj.id
+					}
+
+					features.append(item)
+					houses_list.append(house)
 
 			house = {
 				"type": "FeatureCollection",
@@ -99,12 +116,15 @@ def renting_house_results(request):
 # Make it as only post
 # @login_required
 def post_rent_ad(request):
-	form = RentalHouseForm(initial={'country':'Poland'}, data=request.POST or None)
+	print(request.FILES or None)
+	form = RentalHouseForm(initial={'country':'Poland'}, data=request.POST or None, files=request.FILES or None)
 	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
-	# print(request.user.is_authenticated)
 	if request.method == 'POST' and request.user.is_authenticated:
 		if form.is_valid():
-			rh_obj = form.save()
+			rh_obj = form.save(commit=False)
+			print(request.user)
+			rh_obj.user = request.user
+			rh_obj.save()
 			data = {'url':reverse_lazy('renting:house_amenities'),
 				'id': rh_obj.id}
 
@@ -130,6 +150,10 @@ def post_rent_ad(request):
 	elif request.user.is_anonymous:
 		modl = 'true'
 		return render(request, 'renting/rental_post.html', locals())
+
+	elif request.user.is_authenticated:
+		return render(request, 'renting/rental_post.html', locals())
+
 
 
 # @login_required
@@ -163,8 +187,6 @@ def update_rent_ad(request, id):
 		modl='true'
 		return HttpResponseRedirect(reverse('renting:edit_whole', args=(id,)))
 
-
-	
 
 
 # To get the HTML code of the House and Amenities
@@ -325,7 +347,7 @@ def save_pt(request, id):
 				'url':reverse_lazy('renting:rules_tenant'),
 				'e_url':reverse_lazy('renting:edit_whole',args=(nrh_obj.id,)),
 				'd_url':reverse_lazy('renting:del_whole',args=(nrh_obj.id,)),
-				'h_url':reverse_lazy('renting:home'),
+				'h_url':reverse_lazy('renting:house_details',args=(nrh_obj.id,)),
 				'pt_url':reverse_lazy('renting:save_pt',args=(nrh_obj.id,))
 			}
 			return JsonResponse(data)
@@ -380,7 +402,7 @@ def edit_whole(request, id):
 			else:
 				ptform = PreferredTenantForm()
 
-		# return render(request, 'renting/rental_post_edit.html', locals())
+		return render(request, 'renting/rental_post_edit.html', locals())
 
 	elif request.user.is_anonymous:
 		modl = 'true'
@@ -431,4 +453,29 @@ def zipcode_validate(request):
 		}
 		# print(type(error))
 		return JsonResponse(error, status=404)
+
+
+
+def house_details(request, id):
+	if request.user.is_authenticated:
+		try:
+			nrh_obj = NewRentalHouse.objects.get(pk=id)
+			r_hh = HouseHas.objects.get(nrh=nrh_obj)
+			am = Amenities.objects.get(nrh=nrh_obj)
+			pt = PreferredTenant.objects.get(nrh=nrh_obj)
+			rl = Rules.objects.get(nrh=nrh_obj)
+		except:
+			nrh_obj = None
+
+		if nrh_obj:
+			return render(request, 'renting/house_detail.html', locals())
+
+		######### Handle the error for house object which doesn't exists
+
+	elif request.user.is_anonymous:
+		modl='true'
+		return render(request, 'renting/house_detail.html', locals())
+
+
+
 

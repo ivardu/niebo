@@ -46,12 +46,15 @@ $(function(){
 	$('#house_addr').on('submit', function(event){
 		event.preventDefault();
 		var form = $(this);
+		var formData = new FormData(this);
 		$.ajax({
 			url:form.attr('action'),
 			context:this,
 			type:'post',
-			data:form.serialize(),
+			data:formData,
 			dataType:'json',
+			processData: false,
+    		contentType: false,
 			success:function(data){
 				$('#ha_title_id').append(tick_icon);
 				$('#house_addr').find('input, textarea, select').prop('disabled',true);
@@ -86,7 +89,7 @@ $(function(){
 	});	
 
 	// HH form section and adding the amenities
-	$('#bdy-ma').on('click','#house_has_submit', function(event){
+	$('#mn-bd').on('click','#house_has_submit', function(event){
 		event.preventDefault();
 		var form = $(this).closest('form');
 		console.log(form, form.serialize());
@@ -129,7 +132,7 @@ $(function(){
 
 	});
 	// Amenities form and adding the Rules form
-	$('#bdy-ma').on('click','#am_as_submit', function(event){
+	$('#mn-bd').on('click','#am_as_submit', function(event){
 		event.preventDefault();
 		var form = $(this).closest('form');
 		// console.log(form, form.serialize());
@@ -173,7 +176,7 @@ $(function(){
 
 	});
 	// Rules form and adding the PT form
-	$('#bdy-ma').on('click','#rl_has_submit', function(event){
+	$('#mn-bd').on('click','#rl_has_submit', function(event){
 		event.preventDefault();
 		var form = $(this).closest('form');
 		// console.log(form, form.serialize());
@@ -218,7 +221,7 @@ $(function(){
 	});
 
 	//  PT form and handling the final div
-	$('#bdy-ma').on('click','#pt_has_submit', function(event){
+	$('#mn-bd').on('click','#pt_has_submit', function(event){
 		event.preventDefault();
 		var form = $(this).closest('form');
 		// console.log(form, form.serialize());
@@ -256,7 +259,7 @@ $(function(){
 				// console.log(hurl, durl);
 				$('#fourth_div').load(url+' #final_sec', function(){
 					// console.log(hurl, durl);
-					$(this).find('#ed_btn').attr('href',hurl);
+					$(this).find('#imok_btn').attr('href',hurl);
 					$(this).find('#dl_btn').attr('href',durl);
 					$('#md-del').attr('href',durl);
 					
@@ -284,7 +287,7 @@ $(function(){
 // Handling the Edit From individual Tiles
 $(function(){
 
-	$('#bdy-ma').on('click', '#ha-s, #hh-s, #am-s, #rl-s, #pt-s,#ha-sa, #hh-sa, #am-sa, #rl-sa, #pt-sa', function(){
+	$('#mn-bd').on('click', '#ha-s, #hh-s, #am-s, #rl-s, #pt-s,#ha-sa, #hh-sa, #am-sa, #rl-sa, #pt-sa', function(){
 
 		// var data = $('#house_has_form');
 		var data = $(this).parents('.column').find('form')
@@ -309,7 +312,7 @@ $(function(){
 
 	})
 
-	$('#bdy-ma').on('click','#ha-e, #hh-e, #am-e, #rl-e, #pt-e', function(event){
+	$('#mn-bd').on('click','#ha-e, #hh-e, #am-e, #rl-e, #pt-e', function(event){
 		event.preventDefault();
 		// console.log('here..?');
 		// console.log($(this).parents('.column'));
@@ -367,7 +370,7 @@ $(function(){
 	// $('#bdy-ma').on('keyup','#id_zipcode, #id_longitude, #id_latitude', function(){
 	// 	if($(this).isisNumeric())
 	// })
-	$('#bdy-ma').on('blur','#id_zipcode', function(){
+	$('#mn-bd').on('blur','#id_zipcode', function(){
 		var dat = $('#id_zipcode').val();
 		var err = $(this).parent().find('#hh_err')
 		if(err){
@@ -402,18 +405,28 @@ $(function(){
 $(function(){
 	$('#tenet').on('click', function(){
 		$('#srch-bar').show();
-		$('#owner').addClass('is-light')
+		$('html, body').animate({
+			'scrollTop': $('#srch-bar').position().top
+		});
+		$('#owner').addClass('is-light');
+		$('#otner').addClass('is-light')
 	})
+
 	$('#owner').on('click',function(){
-		$('#owner').removeClass('is-light');
-		$('#srch-bar').hide();
-		// console.log('...?')
-		// console.log($('#tit-neibo'));
-		$('#tit-neibo').text('niebo to post your rent ad..!!')
-		// $('owner').addClass('is-warning');
-		$('#tenet').addClass('is-light');
-		$('#lgn-mod').attr('class','modal is-active');
-	})
-})
+		$.get('sign/', function(data){
+			if(data.user == 'not_logged_in'){
+				$('#owner').removeClass('is-light');
+				$('#srch-bar').hide();
+				// console.log('...?')
+				// console.log($('#tit-neibo'));
+				$('#own-tit-neibo').text('niebo to post your rent ad..!!')
+				// $('owner').addClass('is-warning');
+				$('#tenet').addClass('is-light');
+				$('#own-lgn-mod').attr('class','modal is-active');
+			}
+		});		
+	});
+	
+});
 
 // .off('click');

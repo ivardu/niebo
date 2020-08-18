@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -48,6 +49,10 @@ ROOMS = (
 )
 
 
+def house_images(instance, filename):
+	return f'user_{instance.user.username}/{filename}'
+
+
 class NewRentalHouse(models.Model):
 	house_no = models.CharField(max_length=100)
 	street_address = models.TextField()
@@ -59,10 +64,15 @@ class NewRentalHouse(models.Model):
 	
 	longitude = models.DecimalField(max_digits=4, decimal_places=2)
 	latitude = models.DecimalField(max_digits=4, decimal_places=2)
+	images = models.ImageField(upload_to=house_images, blank=True, null=True)
+
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
-# class ContactDetails(models.Model):
-# 	phone_no = models.IntegerField()
+class ContactDetails(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	phone_no = models.IntegerField()
+
 
 class HouseHas(models.Model):
 

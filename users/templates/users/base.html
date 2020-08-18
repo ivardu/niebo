@@ -48,7 +48,29 @@
 				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Sign In to <span class="has-text-weight-medium" id='tit-neibo'>niebo</span></h6>
 				    	</div>
 				    	<div class="lg-btn">
-				    		<a class="button g has-text-link" href="{% url 'social:begin' 'google-oauth2' %}"><span class="px-1"><i class="fab fa-google"></i></span>Login with Google</a>
+				    		<a class="button g has-text-link" href="{% url 'social:begin' 'google-oauth2' %}?next={{request.path}}"><span class="px-1"><i class="fab fa-google"></i></span>Login with Google</a>
+				    	</div>
+				    	<div class="lg-btn">
+				    		<a class="button has-text-link" href="{% url 'social:begin' 'facebook' %}"><span class="px-1"><i class="fab fa-facebook-f"></i></span>Login with Facebook</a>
+				    	</div>
+					</div>
+				</div>
+	    	</div>
+		</div>
+	  <button class="modal-close is-large" aria-label="close"></button>
+	</div>
+		<div class="modal" id='own-lgn-mod'>
+		<div class="modal-background"></div>
+		<div class="modal-content">
+	    <!-- Any other Bulma elements you want -->
+		    <div class="box" id='mc-id'>
+		    	<div class="modal-card-body">
+				    <div class="lg-col">
+				    	<div class="lg-btn">
+				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Sign In to <span class="has-text-weight-medium" id='own-tit-neibo'>niebo</span></h6>
+				    	</div>
+				    	<div class="lg-btn">
+				    		<a class="button g has-text-link" href="{% url 'social:begin' 'google-oauth2' %}?next=/post_ad"><span class="px-1"><i class="fab fa-google"></i></span>Login with Google</a>
 				    	</div>
 				    	<div class="lg-btn">
 				    		<a class="button has-text-link" href="{% url 'social:begin' 'facebook' %}"><span class="px-1"><i class="fab fa-facebook-f"></i></span>Login with Facebook</a>
@@ -70,7 +92,7 @@
 				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Sign In to <span class="has-text-weight-medium" id='tit-neibo'>niebo</span></h6>
 				    	</div>
 				    	<div class="lg-btn">
-				    		<a class="button g has-text-link" href="{% url 'social:begin' 'google-oauth2' %}"><span class="px-1"><i class="fab fa-google"></i></span>Login with Google</a>
+				    		<a class="button g has-text-link" href="{% url 'social:begin' 'google-oauth2' %}?next={{request.path}}"><span class="px-1"><i class="fab fa-google"></i></span>Login with Google</a>
 				    	</div>
 				    	<div class="lg-btn">
 				    		<a class="button has-text-link" href="{% url 'social:begin' 'facebook' %}"><span class="px-1"><i class="fab fa-facebook-f"></i></span>Login with Facebook</a>
