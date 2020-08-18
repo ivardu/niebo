@@ -149,7 +149,7 @@ from niebo import gcloud
 #Media file storage
 DEFAULT_FILE_STORAGE = 'gcloud.GoogleCloudMediaFileStorage'
 
-MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(os.enviorn.get('GS_MEDIA_BUCKET_NAME'))
+MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(os.environ.get('GS_MEDIA_BUCKET_NAME'))
 MEDIA_ROOT = "media/"
 
 
