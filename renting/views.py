@@ -116,13 +116,13 @@ def renting_house_results(request):
 # Make it as only post
 # @login_required
 def post_rent_ad(request):
-	print(request.FILES or None)
+	# print(request.FILES or None)
 	form = RentalHouseForm(initial={'country':'Poland'}, data=request.POST or None, files=request.FILES or None)
 	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
 	if request.method == 'POST' and request.user.is_authenticated:
 		if form.is_valid():
 			rh_obj = form.save(commit=False)
-			print(request.user)
+			# print(request.user)
 			rh_obj.user = request.user
 			rh_obj.save()
 			data = {'url':reverse_lazy('renting:house_amenities'),

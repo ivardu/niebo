@@ -152,6 +152,9 @@ DEFAULT_FILE_STORAGE = 'gcloud.GoogleCloudMediaFileStorage'
 MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(os.environ.get('GS_MEDIA_BUCKET_NAME'))
 MEDIA_ROOT = "media/"
 
+GS_PROJECT_ID = os.environ['GS_PROJECT_ID']
+GS_MEDIA_BUCKET_NAME = os.environ['GS_MEDIA_BUCKET_NAME']
+GOOGLE_APPLICATION_CREDENTIALS = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
 
 
 #Mapbox-GSL private and publick keys for accessing the maps data
@@ -163,7 +166,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SEC
 
 SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('SOCIAL_AUTH_FACEBOOK_KEY')
 SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('SOCIAL_AUTH_FACEBOOK_SECRET')
-
 
 
 LOGIN_URL = '/'

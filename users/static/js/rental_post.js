@@ -70,10 +70,10 @@ $(function(){
 					$('#second_div').find('#ha_id').remove();
 					$('#pkhere').attr('id',data.id);
 
-
 				}	
 			},
 			error:function(error){
+				console.log(error)
 				var hh_err = error.responseJSON['house_no'];
 				console.log(hh_err)
 				if(hh_err){
