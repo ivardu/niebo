@@ -146,7 +146,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from niebo import gcloud
-
+#Media file storage
 DEFAULT_FILE_STORAGE = 'gcloud.GoogleCloudMediaFileStorage'
 
 MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_MEDIA_BUCKET_NAME)
