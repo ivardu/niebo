@@ -1,7 +1,7 @@
 from django import forms
 from .models import (NewRentalHouse, HouseHas, 
 	Amenities, Rules, PreferredTenant, STATE_CHOICES, HH_FIELD_CHOICES, 
-	FIELD_CHOICES, GENDER_PREF, ROOMS)
+	FIELD_CHOICES, GENDER_PREF, ROOMS, HouseImages)
 
 class SearchForm(forms.Form):
 	place = forms.CharField(widget=forms.TextInput(attrs={'class':'input' ,'placeholder':'Search place'}))
@@ -20,7 +20,6 @@ class RentalHouseForm(forms.ModelForm):
 	longitude = forms.DecimalField(widget=forms.NumberInput(attrs={'class':'input has-background-grey-lighter', 'placeholder':'Longitude','readonly':'readonly'}))
 	latitude = forms.DecimalField(widget=forms.NumberInput(attrs={'class':'input has-background-grey-lighter', 'placeholder':'Latitude','readonly':'readonly'}))
 
-	images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple':True}))
 	
 	class Meta:
 		model = NewRentalHouse
@@ -38,6 +37,21 @@ class RentalHouseForm(forms.ModelForm):
 		# self.fields['state'].widget.attrs['class'] = 'multiple'
 		self.fields['longitude'].widget.attrs['class'] = 'input is-small has-background-grey-lighter'
 		self.fields['latitude'].widget.attrs['class'] = 'input is-small has-background-grey-lighter'
+
+class HouseImagesForm(forms.ModelForm):
+	images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'class':'file-input','multiple':True}))
+
+	class Meta:
+		model = HouseImages
+		fields = ['images']
+
+class HouseImagesEditForm(forms.ModelForm):
+	images = forms.ImageField(widget=forms.FileInput(attrs={'class':'file-input','multiple':True}))
+
+	class Meta:
+		model = HouseImages
+		fields = ['images']
+
 
 
 # Defining all fields is hectic process

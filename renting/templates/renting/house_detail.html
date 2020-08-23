@@ -23,9 +23,15 @@
 	    	</div>
 		</div>
 	</div>
-	<div class="columns">
-		<img class="hs-img" src="{{nrh_obj.images.url}}">
+
+	<div id='carousel-demo' class="carousel">
+		{% for img in imgs %}
+		<div class="item-{{forloop.counter}}">
+			<img class="hs-img" src="{{img.images.url}}">
+		</div>
+		{% endfor %}
 	</div>
+
 	<h3 class="subtitle"><span class="til">House Has</span></h3>
 	<div class="columns is-multiline box">
 
@@ -128,18 +134,24 @@
 		</div>
 	</div>
 	<h6 class="subtitle">Contact Details</h6>
-	<div class="columns">
+	<div class="columns box">
 		<div class="column is-half">
-			<span><i class="fa fa-envelope" aria-hidden="true"> {{nrh_obj.user.email}}</i></span>
+			<span>Address:</span>
+			<span>#{{nrh_obj.house_no}},</span>
+			<span>{{nrh_obj.street_address}},</span>
+			<span>{{nrh_obj.zipcode}},</span>
+			<span>{{nrh_obj.city}},</span>
+			<span>{{nrh_obj.country}}.</span>
 		</div>
 		<div class="column is-half">
+			<span><i class="fa fa-envelope" aria-hidden="true"> {{nrh_obj.user.email}}</i>,</span>
 			<span><i class="fa fa-phone-square" aria-hidden="true"> {% if nrh_obj.user.phone_no %}{{nrh_obj.user.phone_no}}{%else%}Not Available{%endif%}</i></span>
 		</div>
 	</div>
 	
 </div>
 <script type="text/javascript">
-		$(function(){
+$(function(){
 		var modl = '{{modl}}'
 		if(modl){
 			$('#cmpul-lgn-mod').attr('class','modal is-active');
@@ -147,6 +159,10 @@
 		else{
 			console.log('failed');
 		}
-	});
+	// carousel
+	bulmaCarousel.attach('#carousel-demo', {'autoplay':true, 'infinite':true, });
+
+});
+
 </script>
 {% endblock body %}

@@ -27,13 +27,34 @@
 	</div>
   <button class="modal-close is-large" aria-label="close"></button>
 </div>
-
+<div class="modal" id='del-mod'>
+		<div class="modal-background"></div>
+		<div class="modal-content">
+	    <!-- Any other Bulma elements you want -->
+		    <div class="box" id='mc-id'>
+		    	<div class="modal-card-body">
+		    		<div class="columns is-centered">
+				    	<h6 class="title has-text-dark is-size-4 has-text-weight-light">Are you sure, you want to delete this <span class="has-text-weight-medium">Image..?</span></h6>
+				    </div>
+				    <div class="columns is-centered">
+						<div class="column is-one-quarter">
+							<button id="md-cncl" class="button is-small is-fullwidth is-warning">Cancel</button>
+						</div>
+						<div class="column is-one-quarter">
+							<button id="del-img" class="button is-small is-fullwidth is-danger">Yes</a>
+						</div>
+					</div>
+				</div>
+	    	</div>
+		</div>
+	  <button class="modal-close is-large" aria-label="close"></button>
+</div>
 
 <div class="columns has-background-white-bis box">
 	<h1 class="title is-5 mx-2 my-2 px-2 py-2">Welcome House owner..!! you are few steps away to post your rent ad</h1>
 	 <!-- <h6>Search the Location and pin the marker, fill the form..!!</h6> -->
 </div>
-<div class="columns box mt-1">
+<div class="columns box mt-1" id='first_div'>
 	<div class="column has-background-white mn-col" id={{nrh_obj.id}}>
 		<div class="level">
 			<div class="level-left">
@@ -101,6 +122,54 @@
 					{{form.latitude}}
 				</div>
 			</div>
+			<div class="columns">
+					<div class="column">
+						{% if images_list %}
+						<div class="columns">
+							{% for img in images_list %}
+								<div class="column img-div">
+									<img id='{{img.id}}' class="img-ad-cls" src="{{img.images.url}}">
+									<span class="ovr"></span>
+									<!-- <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i> -->
+								</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+						<div class="field">
+							<div class="file is-info has-name" id='file-js-example'>
+								<label class="file-label">
+									{{img_form.images}}
+									<span class="file-cta">
+										<span class="file-icon">
+								          <i class="fa fa-upload"></i>
+										</span>
+								        <span class="file-label">
+								          Upload Images…
+										</span>
+							    	</span>
+							    	<span class="file-name">
+									</span>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			<script>
+				  const fileInput = document.querySelector('#file-js-example input[type=file]');
+				  fileInput.onchange = () => {
+				    if (fileInput.files.length > 0) {
+				      const fileName = document.querySelector('#file-js-example .file-name');
+				      if(fileInput.files.length == 1){
+				      	fileName.textContent = fileInput.files[0].name;	
+				      }
+				      else{
+				      	fileName.textContent = fileInput.files.length+' images';		
+				      }
+				      
+				    }
+				  }
+			</script>
 			<div class="columns is-centered" id='button_sec'>
 
 			</div>
@@ -524,7 +593,7 @@ margin-top: 1rem;
 			
 			disp.innerHTML = 'Longitude: ' + (lngLat.lng).toFixed(2) + '<br />Latitude: ' + lngLat.lat.toFixed(2);
 			el.prepend(disp);
-			console.log($('#id_longitude'));
+			// console.log($('#id_longitude'));
 			lngLatChange(lngLat.lng, lngLat.lat);
 
 	}
@@ -532,6 +601,29 @@ margin-top: 1rem;
 		$('#id_longitude').attr('value',longitude.toFixed(2));
 		$('#id_latitude').attr('value',latitude.toFixed(2));
 	}
+
+	$('.img-div').on('mouseenter',function(){
+		// console.log(this);
+		// var styles = {
+		// 	 position: 'absolute',
+		// 	 center: '2px',
+		// 	 'z-index': 10,
+		// };
+		$(this).find('.ovr').append('<i class="fa fa-times-circle fa-3x" aria-hidden="true"></i>');
+		$(this).css('opacity',0.8);
+		// console.log($(this).find('.ovr'));
+		// $(this).closest('.ovr').css(styles);
+	}).on('mouseleave', function(){
+		// console.log($(this).closest('.ovr'));
+		$(this).css('opacity',1);
+		$(this).find('.fa').remove();
+	});
+
+	$('.ovr').on('mouseenter',function(){
+		$(this).attr('title','Remove Image');
+		$(this).css('opacity',1);
+	});
+
 });
 </script>
 

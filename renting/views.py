@@ -5,8 +5,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from .forms import SearchForm, RentalHouseForm, HouseHasForm, AmenitiesForm, RulesForm, PreferredTenantForm
-from .models import NewRentalHouse, HouseHas, Amenities, PreferredTenant, Rules
+from .forms import SearchForm, RentalHouseForm, HouseHasForm, AmenitiesForm, RulesForm, PreferredTenantForm, HouseImagesForm, HouseImagesEditForm
+from .models import NewRentalHouse, HouseHas, Amenities, PreferredTenant, Rules, HouseImages
 import requests, pgeocode, pandas, json
 
 # url = reverse_lazy('renting:house_amenities')
@@ -74,17 +74,19 @@ def renting_house_results(request):
 					        "country": hous_obj.country,
 					      }
 					    }
-					house = {
-						'house_no':hous_obj.house_no,
-						'street_address':hous_obj.street_address,
-						'zipcode':hous_obj.zipcode,
-						'city':hous_obj.city,
-						'country':hous_obj.country,
-						'id':hous_obj.id
-					}
+					# house = {
+					# 	'house_no':hous_obj.house_no,
+					# 	'street_address':hous_obj.street_address,
+					# 	'zipcode':hous_obj.zipcode,
+					# 	'city':hous_obj.city,
+					# 	'country':hous_obj.country,
+					# 	'id':hous_obj.id
+					# }
+
 
 					features.append(item)
-					houses_list.append(house)
+					houses_list.append(hous_obj)
+					
 
 			house = {
 				"type": "FeatureCollection",
@@ -117,7 +119,9 @@ def renting_house_results(request):
 # @login_required
 def post_rent_ad(request):
 	# print(request.FILES or None)
-	form = RentalHouseForm(initial={'country':'Poland'}, data=request.POST or None, files=request.FILES or None)
+	form = RentalHouseForm(initial={'country':'Poland'}, data=request.POST or None)
+	img_form = HouseImagesForm(files=request.FILES)
+
 	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
 	if request.method == 'POST' and request.user.is_authenticated:
 		if form.is_valid():
@@ -125,6 +129,13 @@ def post_rent_ad(request):
 			# print(request.user)
 			rh_obj.user = request.user
 			rh_obj.save()
+			print(request.FILES.getlist('images'))
+			if img_form.is_valid():
+				for img_file in request.FILES.getlist('images'):
+					HouseImages.objects.create(images=img_file, nrh=rh_obj)
+			else:
+				print(img_form.errors)
+
 			data = {'url':reverse_lazy('renting:house_amenities'),
 				'id': rh_obj.id}
 
@@ -162,14 +173,23 @@ def update_rent_ad(request, id):
 		try:
 			rh_obj = NewRentalHouse.objects.get(pk=id)
 			form = RentalHouseForm(data=request.POST or None, instance=rh_obj)
+			img_form = HouseImagesForm(files=request.FILES)
 		except:
 			rh_obj = None
 
 		if request.method == 'POST' and rh_obj:
 			if form.is_valid():
-				rh_obj = form.save()
+				nrh_obj = form.save()
+				if img_form.is_valid():
+					img_obj = img_form.save(commit=False)
+					img_obj.nrh = rh_obj
+					img_obj.save()
+
+				else:
+					print(img_form.errors)
+				
 				data = {'url':reverse_lazy('renting:house_amenities'),
-					'id': rh_obj.id}
+					'id': nrh_obj.id}
 
 				return JsonResponse(data)
 
@@ -374,13 +394,20 @@ def edit_whole(request, id):
 			a_fobj = Amenities.objects.filter(nrh=nrh_obj)
 			r_fobj = Rules.objects.filter(nrh=nrh_obj)
 			pt_fobj = PreferredTenant.objects.filter(nrh=nrh_obj)
+			img_qset = HouseImages.objects.filter(nrh=nrh_obj)
 
 		except:
 			nrh_obj = None
 			# print(nrh_obj)
 		
 		if nrh_obj:
+			images_list = []
 			form = RentalHouseForm(instance=nrh_obj)
+			img_form = HouseImagesEditForm()
+
+			if img_qset:
+				for img_obj in img_qset:
+					images_list.append(img_obj)
 			if hh_fobj:
 				hh_obj = hh_fobj[0]
 				hform = HouseHasForm(instance=hh_obj)
@@ -464,6 +491,7 @@ def house_details(request, id):
 			am = Amenities.objects.get(nrh=nrh_obj)
 			pt = PreferredTenant.objects.get(nrh=nrh_obj)
 			rl = Rules.objects.get(nrh=nrh_obj)
+			imgs = HouseImages.objects.filter(nrh=nrh_obj)
 		except:
 			nrh_obj = None
 
@@ -478,4 +506,42 @@ def house_details(request, id):
 
 
 
+def rent_ads(request):
+	house_list = NewRentalHouse.objects.filter(user=request.user)
+	houses_list = []
+	edit_list = []
+	for hous_obj in house_list:
+		try:
+			rl = Rules.objects.get(nrh=hous_obj)
+			pt = PreferredTenant.objects.get(nrh=hous_obj)
+			am = Amenities.objects.get(nrh=hous_obj)
+			hh = HouseHas.objects.get(nrh=hous_obj)
+			proceed = True
+		except:
+			proceed = False
+
+		if proceed:
+			houses_list.append(hous_obj)
+		else:
+			edit_list.append(hous_obj)
+
+
+	return render(request, 'renting/ads_list.html', locals())
+
+
+def del_house_image(request,id):
+	if request.user.is_authenticated:
+		if request.method == 'DELETE':
+			try:
+				img_obj = HouseImages.objects.get(pk=id)
+			except:
+				img_obj = None
+
+			if img_obj:
+				img_obj.delete()
+
+				return JsonResponse({'object':'deleted'})
+
+			else:
+				return JsonResponse({'object':'not_found'},status=404)
 

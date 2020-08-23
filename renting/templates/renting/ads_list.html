@@ -1,0 +1,64 @@
+{% extends 'users/base.html' %}
+{% load static %}
+{% block body %}
+<div class="container" id='ad-con'>
+	<article class="message is-primary mes-cls">
+		<div class="message-header">
+			<h6 class="title is-4"><span class="has-text-white">Complete Ads</span></h6>
+		</div>	
+	</article>
+	
+	<div class="columns is-multiline" id="ad-cl">
+		{% if houses_list %}
+			{% for house in houses_list %}
+			<div class="column is-one-quarter box hurs" id="house-{{house.id}}">
+				<a href="{% url 'renting:house_details' house.id %}">
+					<p class="title is-6">#{{house.house_no}},</p>
+					<p class="subtitle is-6">{{house.street_address}}, {{house.zipcode}}, {{house.city}},
+					{{house.country}}</p>
+					{% for img in house.houseimages_set.all %}
+						{% if forloop.counter == 1 %}
+							<img class="img-ad-cls" src="{{img.images.url}}">
+						{% endif %}
+					{% empty %}
+					<div class="columns is-centered">
+						<i class="fa fa-picture-o fa-10x has-text-grey-light" aria-hidden="true"></i>
+					</div>
+					{% endfor %}
+				</a>	
+			</div>
+			{% endfor %}
+		{% else %}
+		<div class="box column is-full resul-txt">Sorry..!! You don't have any ads..<a class="button is-primary" href="{% url 'renting:post_rent_ad' %}">Post Ad</a></div>
+		{% endif %}
+	</div>
+	{% if edit_list %}
+	<article class="message is-warning mes-cls">
+		<div class="message-header">
+			<h6 class="title is-4"><span class="has-text-white">Incomplete Ads</span></h6>
+		</div>	
+	</article>
+	<div class="columns is-multiline" id="ad-cll">	
+		{% for house in edit_list %}
+		<div class="column is-one-quarter box hurs" id="house-{{house.id}}">
+			<a href="{% url 'renting:edit_whole' house.id %}">
+				<p class="ncr title is-6">#{{house.house_no}},</p>
+				<p class="ncr subtitle is-6">{{house.street_address}}, {{house.zipcode}}, {{house.city}},
+				{{house.country}}</p>
+				{% for img in house.houseimages_set.all %}
+					{% if forloop.counter == 1 %}
+						<img class="img-ad-cls" src="{{img.images.url}}">
+					{% endif %}
+				{% empty %}
+					<div class="columns is-centered">
+						<i class="fa fa-picture-o fa-10x has-text-grey-light" aria-hidden="true"></i>
+					</div>
+				{% endfor %}
+			</a>	
+		</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+</div>
+
+{% endblock %}

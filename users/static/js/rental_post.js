@@ -47,20 +47,27 @@ $(function(){
 		event.preventDefault();
 		var form = $(this);
 		var formData = new FormData(this);
+		console.log(formData);
+		console.log(form);
 		$.ajax({
-			url:form.attr('action'),
+			url:form.attr('data-url'),
 			context:this,
 			type:'post',
 			data:formData,
 			dataType:'json',
 			processData: false,
     		contentType: false,
+    		beforeSend:function(){
+    			$(this).append('<progress id="ha_id" class="progress is-small is-primary" max="100">15%</progress>');
+    		},
+    		complete:function(){
+    			$(this).find('#ha_id').remove();
+    		},
 			success:function(data){
 				$('#ha_title_id').append(tick_icon);
 				$('#house_addr').find('input, textarea, select').prop('disabled',true);
 				$('#button_sec').hide();
 				$(this).parents('.mn-col').find('button:hidden').show();
-				$('#second_div').append('<progress id="ha_id" class="progress is-small is-primary" max="100">15%</progress>');
 				var url = data.url;
 				if(data.url){
 					$('html, body').animate({
@@ -287,19 +294,19 @@ $(function(){
 // Handling the Edit From individual Tiles
 $(function(){
 
-	$('#mn-bd').on('click', '#ha-s, #hh-s, #am-s, #rl-s, #pt-s,#ha-sa, #hh-sa, #am-sa, #rl-sa, #pt-sa', function(){
+	$('#mn-bd').on('click', '#ha-s, #hh-s, #am-s, #rl-s, #pt-s, #ha-sa, #hh-sa, #am-sa, #rl-sa, #pt-sa', function(){
 
 		// var data = $('#house_has_form');
-		var data = $(this).parents('.column').find('form')
-		console.log(data)
-		// console.log(dd, dd.serialize(),dd.attr('data-url'));
-
+		var data = $(this).parents('.column').find('form');
+		var fD = new FormData(data[0]);
 		$.ajax({
 			url: data.attr('data-url'),
 			context:this,
 			type:'post',
-			data: data.serialize(),
+			data: fD,
 			dataType:'json',
+			processData: false,
+    		contentType: false,
 			success:function(data){
 				$(this).parents('.column').find('input, select, textarea').prop('disabled', true);
 				$(this).parent().find('button:hidden').show();
@@ -308,9 +315,9 @@ $(function(){
 			error:function(data){
 				console.log(data);
 			}
-		})
+		});
 
-	})
+	});
 
 	$('#mn-bd').on('click','#ha-e, #hh-e, #am-e, #rl-e, #pt-e', function(event){
 		event.preventDefault();
@@ -347,7 +354,7 @@ $(function(){
 
 	// $('#mc-id').on('blur')
 
-	$('#lgn-mod, #del-cncl').mouseup(function(e){
+	$('#lgn-mod, #del-cncl, #del-mod').mouseup(function(e){
 		// console.log('heree..');
 		var mod = $('#mc-id');
 		if (!mod.is(e.target) && mod.has(e.target).length === 0){
@@ -404,12 +411,30 @@ $(function(){
 
 $(function(){
 	$('#tenet').on('click', function(){
+		console.log($('.mapboxgl-ctrl-geocoder--input'));
+		// $('.mapboxgl-ctrl-geocoder').focus();
+		$('#hm-h-t-div').css('height','12vh');
+		$('.mapboxgl-ctrl-geocoder--input').focus();
 		$('#srch-bar').show();
+		$('#srch-bar').css('height','30vh');
 		$('html, body').animate({
 			'scrollTop': $('#srch-bar').position().top
 		});
 		$('#owner').addClass('is-light');
 		$('#otner').addClass('is-light')
+		$.ajax({
+			url:'usr/type',
+			type:'POST',
+			data:{'user_type':'tenant'},
+			context:this,
+			dataType:'json',
+			success:function(data){
+				console.log('success')
+			},
+			error:function(){
+				console.log('failed')
+			}
+		})
 	})
 
 	$('#owner').on('click',function(){
@@ -427,6 +452,34 @@ $(function(){
 		});		
 	});
 	
+});
+
+$(function(){
+
+	$('#first_div').on('click', '.ovr', function(){
+		$(this).siblings('.fa').css('transform','scale(0.98)');
+		$('#del-mod').attr('class','modal is-active');
+		
+		var this_c = $(this);
+
+		$('#mn-bd').on('click','#del-img', function(){
+			var id = $(this_c).parent('.img-div').find('.img-ad-cls').attr('id');
+			console.log('executing',id);
+			$.ajax({
+				url:'/del_img/'+id+'/',
+				type:'DELETE',
+				context:this_c,
+				success:function(data){
+					console.log(data);
+					$(this).parent('.img-div').remove();
+				},
+				error:function(error){
+					console.log(error);
+				}
+
+			});
+		});
+	});
 });
 
 // .off('click');

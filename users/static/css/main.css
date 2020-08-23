@@ -125,10 +125,9 @@ img.img-cls{
 	width: 21rem;
 	height: 12rem;
 }
-.column.hsrs{
+.column.hsrs,.column.hurs{
 	margin-bottom: 0.25rem;
 	margin-right: 0.25rem;
-	width: 49%;
 	box-shadow:-0.1em 0.01em 0.4em 0.2em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
 	-webkit-box-shadow:-0.1em 0.01em 0.4em 0.2em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
 	-moz-box-shadow:-0.1em 0.01em 0.4em 0.2em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
@@ -158,7 +157,7 @@ img.img-cls{
 }
 
 #sec-id.is-fullheight{
-	min-height: 85vh;
+	min-height: 90vh;
 }
 
 #navbar-shadow{
@@ -192,15 +191,21 @@ img.img-cls{
 	padding-right:1.25rem; 
 }
 
-.hsrs{
+.column.hsrs {
+	width: 49%;
+}
+.hsrs, .hurs{
 	cursor: pointer;
 
 }
-.hsrs:hover{
+.hsrs:hover, .hurs:hover{
 	/*background: white;*/
 	box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
 }
 
+.column.hurs{
+	margin-right: 0;
+}
 #srch-bar{
 	display: none;
 }
@@ -249,4 +254,92 @@ img.img-cls{
 }
 .resul-txt{
 	font-size: 2rem;
+}
+
+#ad-cl,#ad-cll{
+	margin: 0rem;
+}
+#ad-con{
+	max-width: 80vw;
+}
+.mes-cls{
+	margin-top: 1rem;
+}
+.img-ad-cls{
+	width: 18rem;
+	height: 10rem;
+	transform: scale(1);
+}
+.img-div{
+	position: relative;
+}
+
+/*.img-div:hover{
+	opacity: 0.8;
+}*/
+
+.ovr{
+	position: absolute;
+	cursor: pointer;
+	top: 0rem;
+	bottom: 0rem;
+	right: 0rem;
+	left: 0rem;
+	height: 100%
+	weight: 100%;
+	z-index: 10;
+	color: #000;
+	/*opacity: 1;*/
+	/*box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);*/
+}
+
+.fa-times-circle:hover{
+	box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
+	color: #ef0808;
+}
+.fa-times-circle{
+	position: absolute;
+	color: #000;
+	opacity: 1;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+ 	-ms-transform: translate(-50%, -50%);
+  	text-align: center;
+}
+
+/*.fa-times-circle:active{
+	transform: scale(0.98);
+}*/
+
+#sec_on{
+	/*display: none;*/
+}
+
+#sec_two{
+	display: none;
+}
+
+.set-hd{
+	outline: none;
+}
+
+.set-nvbr-mn{
+	flex-grow: 0;
+}
+
+#ip-bt{
+	margin-top: 1rem;
+}
+
+.hero-foot{
+	height: 5vh;	
+}
+
+.fot.columns{
+	margin-top: 0;
+}
+
+#hm-h-t-div{
+	height: 30vh;
 }

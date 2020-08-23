@@ -59,7 +59,7 @@
 		</div>
 	  <button class="modal-close is-large" aria-label="close"></button>
 	</div>
-		<div class="modal" id='own-lgn-mod'>
+	<div class="modal" id='own-lgn-mod'>
 		<div class="modal-background"></div>
 		<div class="modal-content">
 	    <!-- Any other Bulma elements you want -->
@@ -115,46 +115,45 @@
 		  </div>
 
 		  <div id="navbarBasicExample" class="navbar-menu">
+		  	{% block navbar %}
 		    <div class="navbar-start">
-		    	{% block navbar %}
-	<!-- 	      <a class="navbar-item">
+		    	
+		      <a class="navbar-item">
 		        Home
 		      </a>
-
-		      <a class="navbar-item">
-		        Documentation
-		      </a> -->
-
-	<!-- 	      <div class="navbar-item has-dropdown is-hoverable">
+		      <a class="navbar-item" href="{% url 'renting:rent_ad_list' %}">
+		        My Rent Ads
+		      </a>
+		    </div>
+	 	      <div class="navbar-item has-dropdown is-hoverable">
 		        <a class="navbar-link">
-		          More
+		          LandLord
 		        </a>
 				
 		        <div class="navbar-dropdown">
 		          <a class="navbar-item">
-		            About
+		            Tenant
 		          </a>
-		          <a class="navbar-item">
-		            Jobs
-		          </a>
-		          <a class="navbar-item">
-		            Contact
-		          </a>
-		          <hr class="navbar-divider">
-		          <a class="navbar-item">
-		            Report an issue
-		          </a>
-		        </div>-->
-		        
-		        {% endblock navbar%}
-		      </div> 
+		        </div>
+		    </div> 
+		       {% endblock navbar%}
 		    </div>
 
 		    <div class="navbar-end nb-end">
 		    	{% if user.is_authenticated %}	
-		    	<div class="navbar-item">
+		    	<div class="navbar-item has-dropdown is-hoverable">
+			    		<!-- <span class='button is-primary'>{{user.username}}</span> -->
+			    		<a class="navbar-link" aria-haspopup="true" aria-controls="dropdown-menu">
+					      <span>{{user.username}}</span>
+					    </a>
+			      	<div class="navbar-dropdown">
+		          		<a class="navbar-item" href="{% url 'users:settings' %}">
+		            	Settings
+		          		</a>
+		       		</div>
+		      	</div>
+		      	<div class="navbar-item">
 		    		<div class="buttons">
-			    		<span class='button is-primary'>{{user.username}}</span>
 						<a class="button is-light" href="{% url 'logout' %}">Log Out</a>
 			      	</div>
 		      	</div>
@@ -181,7 +180,13 @@
 			<!-- </div> -->
 		</div>
 		<div class="hero-foot">
-			
+			{% block footer %}
+			<div class="fot columns is-centered has-background-info">
+				<span class="has-text-white-bis">
+					<footer>&copy; Copyright 2020 Niebo</footer>
+				</span>	
+			</div>
+			{% endblock footer %}
 		</div>
 	</section>
 			<script type="text/javascript">

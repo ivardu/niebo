@@ -18,4 +18,6 @@ urlpatterns = [
 	path('dlw/<int:id>/', rt.delete_whole, name='del_whole'),
 	path('zp/', rt.zipcode_validate, name='validate_zip'),
 	path('hd/<int:id>/', rt.house_details, name='house_details'),
+	path('adlist/', rt.rent_ads, name='rent_ad_list'),
+	path('del_img/<int:id>/',rt.del_house_image, name='del_img'),
 ]

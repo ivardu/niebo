@@ -50,7 +50,7 @@ ROOMS = (
 
 
 def house_images(instance, filename):
-	return f'user_{instance.user.username}/{filename}'
+	return f'user_{instance.nrh.user.username}/{filename}'
 
 
 class NewRentalHouse(models.Model):
@@ -64,14 +64,13 @@ class NewRentalHouse(models.Model):
 	
 	longitude = models.DecimalField(max_digits=4, decimal_places=2)
 	latitude = models.DecimalField(max_digits=4, decimal_places=2)
+
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class HouseImages(models.Model):
 	images = models.ImageField(upload_to=house_images, blank=True, null=True)
+	nrh = models.ForeignKey(NewRentalHouse, on_delete=models.CASCADE)
 
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
-class ContactDetails(models.Model):
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	phone_no = models.IntegerField()
 
 
 class HouseHas(models.Model):

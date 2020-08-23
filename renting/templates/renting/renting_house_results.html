@@ -20,7 +20,7 @@
 	<div class="columns" id='sec-col'>
 		<div class="column is-half" id='rhd-col'>
 			<div class="columns is-multiline" id="rhd-plc">
-				{% if houses_list %}
+				{% if house_list %}
 					{% for house in houses_list %}
 					<div class="column is-half box hsrs" id="house-{{house.id}}">
 						<p class="ncr title is-6">#{{house.house_no}},</p>
@@ -30,7 +30,17 @@
 						<!-- <p class="subtitle is-6">{{house.street_address}},</p>
 						<p class="subtitle is-6">{{house.zipcode}}, {{house.city}}</p>
 						<p class="subtitle is-6">{{house.country}}</p> -->
-						<a href="{% url 'renting:house_details' house.id %}?next={{request.path}}"><img class="img-cls" src="{%static 'img/house-img1.jpg' %}"></a>
+						<a href="{% url 'renting:house_details' house.id %}?next={{request.path}}">
+							{% for img in house.houseimages_set.all %}
+								{% if forloop.counter == 1 %}
+									<img class="img-cls" src="{{img.images.url}}">
+								{% endif %}
+							{% empty %}
+							<div class="columns is-centered">
+									<i class="fa fa-picture-o fa-10x has-text-grey-light" aria-hidden="true"></i>
+							</div>
+							{% endfor %}
+						</a>
 							
 					</div>
 					{% endfor %}
@@ -217,6 +227,11 @@
 				}
 				var listing = document.getElementById('listing-' + clickedPoint.properties.id);
 				listing.classList.add('active');
+				}else{
+					var popUps = document.getElementsByClassName('mapboxgl-popup');
+					if(popUps[0]){
+						popUps[0].remove();
+					}
 				}
 		});
 
@@ -237,7 +252,10 @@
       **/
 	function createPopUp(currentFeature) {
 		var popUps = document.getElementsByClassName('mapboxgl-popup');
-		if (popUps[0]) popUps[0].remove();
+		console.log(popUps[0]);
+		if(popUps[0]){
+			popUps[0].remove();
+		}
 		var popup = new mapboxgl.Popup({closeOnClick: false})
 		.setLngLat(currentFeature.geometry.coordinates)
 		.setHTML('<h3>#'+currentFeature.properties.house_no+'</h3>' +

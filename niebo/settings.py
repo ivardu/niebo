@@ -149,7 +149,12 @@ from niebo import gcloud
 #Media file storage
 DEFAULT_FILE_STORAGE = 'gcloud.GoogleCloudMediaFileStorage'
 
-MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(os.environ.get('GS_MEDIA_BUCKET_NAME'))
+GS_PROJECT_ID = 'chromatic-idea-286616'
+GS_MEDIA_BUCKET_NAME = 'niebo'  # same as STATIC BUCKET if using single bucket both for static and media
+
+
+# MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(os.environ.get('GS_MEDIA_BUCKET_NAME'))
+MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_MEDIA_BUCKET_NAME)
 MEDIA_ROOT = "media/"
 
 # Adding the settings is very import and choosing the environ names
@@ -169,11 +174,15 @@ SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('SOCIAL_AUTH_FACEBOOK_KEY')
 SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('SOCIAL_AUTH_FACEBOOK_SECRET')
 
 
+
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+# from django.contrib.auth.models import User
+# AUTH_USER_MODEL = 'User'
 
 
 django_heroku.settings(locals())

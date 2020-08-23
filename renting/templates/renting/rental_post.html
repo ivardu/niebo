@@ -38,7 +38,7 @@
 					<button id='ha-sa' type='submit' class="button is-small is-primary">Save</button>
 				</div>
 			</div>
-			<form method="post" id="house_addr" action="{% url 'renting:post_rent_ad' %}" enctype="multipart/form-data">
+			<form method="post" id="house_addr" data-url="{% url 'renting:post_rent_ad' %}" enctype="multipart/form-data">
 				{% csrf_token %}
 				<div class="columns">
 					<div class="column" id='hh_no'>
@@ -107,11 +107,40 @@
 				</div>
 				<div class="columns">
 					<div class="column">
-						{{form.images.errors}}
-						{{form.images.label}}
-						{{form.images}}
+						<div class="field">
+							<div class="file is-info has-name" id='file-js-example'>
+								<label class="file-label">
+									{{img_form.images}}
+									<span class="file-cta">
+										<span class="file-icon">
+								          <i class="fa fa-upload"></i>
+										</span>
+								        <span class="file-label">
+								          Upload Images…
+										</span>
+							    	</span>
+							    	<span class="file-name">
+									</span>
+								</label>
+							</div>
+						</div>
 					</div>
 				</div>
+				<script>
+				  const fileInput = document.querySelector('#file-js-example input[type=file]');
+				  fileInput.onchange = () => {
+				    if (fileInput.files.length > 0) {
+				      const fileName = document.querySelector('#file-js-example .file-name');
+				      if(fileInput.files.length == 1){
+				      	fileName.textContent = fileInput.files[0].name;	
+				      }
+				      else{
+				      	fileName.textContent = fileInput.files.length+' images';		
+				      }
+				      
+				    }
+				  }
+				</script>
 				<div class="columns is-centered" id='button_sec'>
 					<div class="column is-one-quarter">
 						<input id='house_addr_submit' class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
