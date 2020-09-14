@@ -29,6 +29,15 @@
 		<div class="item-{{forloop.counter}}">
 			<img class="hs-img" src="{{img.images.url}}">
 		</div>
+		{% empty %}
+		<div class="item-1">
+			<!-- <i class="fa fa-picture-o fa-100x has-text-grey-light" aria-hidden="true"></i> -->
+			<img class="hs-img-n" src="{% static '/img/hmm-1.png' %}">
+		</div>
+		<div class="item-2">
+			<!-- <i class="fa fa-picture-o fa-100x has-text-grey-light" aria-hidden="true"></i> -->
+			<img class="hs-img-n" src="{% static '/img/hmm-1.png' %}">
+		</div>
 		{% endfor %}
 	</div>
 
@@ -135,7 +144,10 @@
 	</div>
 	<h6 class="subtitle">Contact Details</h6>
 	<div class="columns box">
-		<div class="column is-half">
+		<div class="column is-one-third">
+			<h6 class="subtitle is-6">Rent: <span class="is-size-3"><i class="fa fa-eur"></i> {{nrh_obj.rent}}</span></h6>
+		</div>
+		<div class="column is-one-third">
 			<span>Address:</span>
 			<span>#{{nrh_obj.house_no}},</span>
 			<span>{{nrh_obj.street_address}},</span>
@@ -143,7 +155,7 @@
 			<span>{{nrh_obj.city}},</span>
 			<span>{{nrh_obj.country}}.</span>
 		</div>
-		<div class="column is-half">
+		<div class="column is-one-third">
 			<span><i class="fa fa-envelope" aria-hidden="true"> {{nrh_obj.user.email}}</i>,</span>
 			<span><i class="fa fa-phone-square" aria-hidden="true"> {% if nrh_obj.user.phone_no %}{{nrh_obj.user.phone_no}}{%else%}Not Available{%endif%}</i></span>
 		</div>

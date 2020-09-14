@@ -123,38 +123,76 @@
 				</div>
 			</div>
 			<div class="columns">
-					<div class="column">
-						{% if images_list %}
-						<div class="columns">
-							{% for img in images_list %}
-								<div class="column img-div">
-									<img id='{{img.id}}' class="img-ad-cls" src="{{img.images.url}}">
-									<span class="ovr"></span>
-									<!-- <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i> -->
-								</div>
-							{% endfor %}
-						</div>
-						{% endif %}
-						<div class="field">
-							<div class="file is-info has-name" id='file-js-example'>
-								<label class="file-label">
-									{{img_form.images}}
-									<span class="file-cta">
-										<span class="file-icon">
-								          <i class="fa fa-upload"></i>
-										</span>
-								        <span class="file-label">
-								          Upload Images…
-										</span>
-							    	</span>
-							    	<span class="file-name">
-									</span>
-								</label>
+				<div class="column" id='avl'>
+					<h5><small>Availability of house</small></h5>
+				</div>
+				<div class="column ">
+					{{form.rent.errors}}
+					{{form.rent.label}}
+					<div class="control has-icons-left">
+					{{form.rent}}
+					  <span class="icon is-left">
+					    <i class="fa fa-eur"></i>
+					  </span>
+					</div>
+				</div>
+			</div>
+			<div class="columns brdr">
+				<div class="column">
+					{{form.in_date.errors}}
+					{{form.in_date.label}}
+					{{form.in_date}}
+				</div>
+				<div class="column">
+					{{form.out_date.errors}}
+					{{form.out_date.label}}
+					{{form.out_date}}
+				</div>
+			</div>
+			<script>
+			$(function(){	
+				$(".datetimepicker-dummy-input").on('click', function(){
+					console.log('Herer..!!');
+					$('html, body').animate({
+						scrollTop: $("#second_div").position().top},
+						'slow');
+					// datetimepicker-footer-cancel
+				});
+			});
+			</script>
+			
+			<div class="columns">
+				<div class="column">
+					{% if images_list %}
+					<div class="columns">
+						{% for img in images_list %}
+							<div class="column img-div">
+								<img id='{{img.id}}' class="img-ad-cls" src="{{img.images.url}}">
+								<span class="ovr"></span>
+								<!-- <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i> -->
 							</div>
+						{% endfor %}
+					</div>
+					{% endif %}
+					<div class="field">
+						<div class="file is-info has-name" id='file-js-example'>
+							<label class="file-label">
+								{{img_form.images}}
+								<span class="file-cta">
+									<span class="file-icon">
+										<i class="fa fa-upload"></i>
+									</span>
+									<span class="file-label">
+										Upload Images…
+									</span>
+								</span>
+								<span class="file-name">
+								</span>
+							</label>
 						</div>
 					</div>
 				</div>
-
+			</div>
 			<script>
 				  const fileInput = document.querySelector('#file-js-example input[type=file]');
 				  fileInput.onchange = () => {
@@ -186,7 +224,7 @@
 	</div>
 </div>
 <div class="columns" id='second_div'>
-	<div class="column box is-half mt-1 mb-1 cv-cls">
+	<div class="column box is-half mt-1 mb-1 cv-cls" id='house_has'>
 		<div class="level" id='hh-hd-div'>
 			<div class="level-left">
 				<h6 class="title is-4" id='hh_btn_tit'>House Has <span class="button is-small is-danger">4</span></h6>
@@ -514,18 +552,19 @@ margin-top: 1rem;
 }
 </style>
 <script type="text/javascript">
-		$(function(){
-		var modl = '{{modl}}'
-		if(modl){
-			$('#cmpl-lgn-mod').attr('class','modal is-active');
-		}
-		else{
-			console.log('failed');
-		}
-	});
+$(function(){
+	var modl = '{{modl}}'
+	if(modl){
+		$('#cmpl-lgn-mod').attr('class','modal is-active');
+	}
+	else{
+		console.log('failed');
+	}
+});
+
 </script>
 <script type="text/javascript">
-	$(function(){
+$(function(){
 	mapboxgl.accessToken = 
 		'{{PUB_KEY}}';
 	var map = new mapboxgl.Map({
@@ -624,7 +663,20 @@ margin-top: 1rem;
 		$(this).css('opacity',1);
 	});
 
+	// $('.datetimepicker-dummy-input').click(function(){
+	// 	console.log('are you here..?');
+	// 	$('html, body').animate({
+	// 		scrollTop:$('#second_div').position().top
+	// 	});
+	// });
+	
+
 });
+
+</script>
+<script type="text/javascript">
+	console.log($('.datetimepicker-dummy-input').length);
+
 </script>
 
 {% endblock body %}

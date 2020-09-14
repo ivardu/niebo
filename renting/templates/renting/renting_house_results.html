@@ -1,7 +1,9 @@
 {% extends 'users/base.html' %}
 {% load static %}
+{% block footer %}
+{% endblock footer %}
 {% block navbar %}
-<form method="post" class="hm">
+<form id='srch-form' class="hm">
 	<div class="columns">
 		<div class="navbar-item">
 			<!-- <form method='post'> -->
@@ -9,8 +11,21 @@
 				<div id='geocoder' class="inpline"></div>
 			<!-- </form> -->
 		</div>
+		<div class="navbar-item" id='srt'>
+			<button id='srtby' class="button"><span class="st">SortBy </span><span> <i class="fas fa-angle-down" aria-hidden="true"></i></span></button>
+		</div>
 		<div class="navbar-item">
-				<button id='sr-btn' type="submit" class="button">Search</button>
+			<div class="dropdown" id='bhk_mn'>
+				<div class="select" role="menu">
+					<select id="bhk_id">
+						<option class="">Bedroom</option>
+						<option class="">1BHK</option>
+						<option class="">2BHK</option>
+						<option class="">3BHK</option>
+						<option class="">3+BHK</option>
+					</select>
+				</div>
+			</div>
 		</div>
 	</div>
 </form>
@@ -21,9 +36,12 @@
 		<div class="column is-half" id='rhd-col'>
 			<div class="columns is-multiline" id="rhd-plc">
 				{% if house_list %}
-					{% for house in houses_list %}
+					{% for house,bed in houses_list.items %}
 					<div class="column is-half box hsrs" id="house-{{house.id}}">
-						<p class="ncr title is-6">#{{house.house_no}},</p>
+						<div class="level">
+							<div class="left"><p class="ncr title is-size-5"><i class="fa fa-eur"></i> {{house.rent}} Monthly</p></div>
+							<div class="right"><p class="ncr title is-size-5">{{bed}}</p></div>
+						</div>
 						<p class="ncr subtitle is-6">{{house.street_address}}, {{house.zipcode}}, {{house.city}},
 						{{house.country}}</p>
 
@@ -31,6 +49,8 @@
 						<p class="subtitle is-6">{{house.zipcode}}, {{house.city}}</p>
 						<p class="subtitle is-6">{{house.country}}</p> -->
 						<a href="{% url 'renting:house_details' house.id %}?next={{request.path}}">
+
+							{% if house.houseimages_set.all %}
 							{% for img in house.houseimages_set.all %}
 								{% if forloop.counter == 1 %}
 									<img class="img-cls" src="{{img.images.url}}">
@@ -40,6 +60,7 @@
 									<i class="fa fa-picture-o fa-10x has-text-grey-light" aria-hidden="true"></i>
 							</div>
 							{% endfor %}
+							{% endif %}
 						</a>
 							
 					</div>
@@ -55,163 +76,207 @@
 		</div>
 	</div>
 </div>
-
-
 <script>
-	// console.log(cord);
-	
-	// widget.init(houses);
-	// console.log(houses);
+	var retHouse;
+	// Navbar filters Js
 
-	$(function(){
-		mapboxgl.accessToken = '{{PUB_KEY}}';
-		var geocoder = new MapboxGeocoder({
-			accessToken:mapboxgl.accessToken,
-			mapboxgl:mapboxgl
-		})
-		// console.log(geocoder);
-	// document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
-		geocoder.addTo('#geocoder');
-			$('.mapboxgl-ctrl-geocoder--input').attr('value','{{place}}');
-			$('.mapboxgl-ctrl-geocoder--input').attr('name','place');	
+	$('#srch-form').on('submit',function(event){
+		event.preventDefault();
+	})
+	$('#srtby').on('click', function () {
+		if($(this).text()=='Ascending'){
+			$(this).parent('#srt').append('<ul class="srtul"><li class="srtli">Descending</li></ul>');
+		}else if($(this).text()=='Descending'){
+			$(this).parent('#srt').append('<ul class="srtul"><li class="srtli">Ascending</li></ul>');
+		}else{
+			$(this).parent('#srt').append('<ul class="srtul"><li class="srtli">Ascending</li><li class="srtli">Descending</li></ul>');
+		}
+		
 	});
 
-	var houses = JSON.parse("{{house|escapejs}}");
-	// console.log(houses);
+	$('body').mouseup(function (e) {
+		var ul = $('#srt').find('.srtul');
+		disable(ul,e);
+	});
 
-	// $(function(){
-	// 	$('#sr-btn').on('click', function(){
-	// 		var data = $('form .mapboxgl-ctrl-geocoder--input').val();
-	// 		// console.log(data);
-	// 		$.ajax({
-	// 			type:'POST',
-	// 			data:{'place':data}
-	// 		})
-	// 	})
-	// })
+	$('#bhk_mn').on('change','#bhk_id',function(){
+		var inp_val = $('.mapboxgl-ctrl-geocoder--input');
+		var opt = $(this).children('option:selected').val();
+		if($(inp_val).val() != ''){				
+			getNewHouses($(inp_val).val(), undefined , opt);
+		}	
+	})
 
-	$(function(){
-		// var cord = document.getElementById('cord').innerHTML;
-		var cord = '{{cord}}';
-		// console.log(cord);
+	function disable(el,e){
+
+		if (!el.is(e.target) && el.has(e.target).length === 0) {
+			$('#srt').find('.srtul').remove();
+		}
+	}
+
+	$('#navbarBasicExample').on('click','.srtli', function(){
+		if($('#war-text'))$('#war-text').remove();
+		$('#srtby').text($(this).text());
+		$('#srt').find('.srtul').remove();
+		var inp_val = $('.mapboxgl-ctrl-geocoder--input');
+		if($(inp_val).val() != ''){				
+			getNewHouses($(inp_val).val(), $(this).text(), undefined);
+		}else{
+			$('#geocoder').append("<span id='war-text' class='has-text-danger' style='font-size:0.8rem;'>Enter the place you are looking for..</span>")
+		}
+	});
+	var inp_lit = []
+	$('#geocoder').on('change', '.mapboxgl-ctrl-geocoder--input', function () {
+		if($('#war-text'))$('#war-text').remove();
+		var inp_val = $('.mapboxgl-ctrl-geocoder--input').val();
+		inp_lit.push(inp_val);
+		if (inp_lit.length > 1) {
+			getNewHouses(inp_val, undefined, undefined)
+		}
+	});
+
+	function getNewHouses(place, sort_val, bhk){
+		inp_lit = []
+		$.ajax({
+			url: '',
+			data: { 'place': place,'sort_by':sort_val,'bhk':bhk},
+			type: 'POST',
+			context: this,
+			success: function (data) {
+				$('#rhd-col').empty();
+				$('#rhd-col').html(data);
+			}
+		})
+	}
+
+
+	$(function () {
 		mapboxgl.accessToken = '{{PUB_KEY}}';
-		var map = new mapboxgl.Map({
-		container: 'map',
-		style: 'mapbox://styles/mapbox/streets-v11',
-		// center:[76.49, 11.83],
-		center:[20.977185,52.234062],
-		zoom:10
-		});
-		map.scrollZoom.disable();
-
-		// http://maps.google.com/?q=Nowoursynowska+145A%2CWarsaw
-
-		// var geocoder = new MapboxGeocoder({
-		// 	accessToken:mapboxgl.accessToken,
-		// 	mapboxgl:mapboxgl
-		// })
-		// document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
-		// geocoder.addTo('#geocoder');
-
-		// map.on('load', function(){
-		// // console.log(cord);
-		// var lnglt = cord.split(',')
-		// var lng = parseFloat(lnglt[0]);
-		// var lt = parseFloat(lnglt[1]);
-		// map.jumpTo({center:[lng, lt],zoom:10});
-		// });
-
-		// var houses_json = JSON.parse('{{house|safe}}');
-		
-		// var houses = houses;
-		if(houses.features){
-			// houses.features.forEach(function(house, i){
-			// 	house.properties.id=i;
-			// });
-			
-
-		map.on('load', function(e){
-			map.addSource("places", {
-	        	"type": "geojson",
-	        	"data": houses
-        	});
-
-        	buildLocationList(houses);
-        	addMarkers();
-        	
-		});
-
-
-		function addMarkers() {
-			houses.features.forEach(function(marker){
-				// create a DOM element for the marker
-				var el = document.createElement('div');
-				el.id = "marker-" + marker.properties.id;
-				el.className = 'marker';
-				el.style.backgroundImage ='url(/static/img/house-marker.png)';
-				 
-				 // console.log(marker);
-
-				// add marker to map
-				new mapboxgl.Marker(el, { offset: [0, -23] })
-				.setLngLat(marker.geometry.coordinates)
-				.addTo(map);
-
-				el.addEventListener('click', function(e){
-					/* Fly to the point */
-					flyToStore(marker);
-					/* Close all other popups and display popup for clicked store */
-					createPopUp(marker);
-					/* Highlight listing in sidebar */
-					var activeItem = document.getElementsByClassName('active');
-					e.stopPropagation();
-					if (activeItem[0]) {
-					  activeItem[0].classList.remove('active');
-					}
-					var house = document.getElementById('house-' + marker.properties.id);
-					house.classList.add('active');
-				});
-			});
+		var geocoder = new MapboxGeocoder({
+			accessToken: mapboxgl.accessToken,
+			mapboxgl: mapboxgl
+		})
+		if ($('.mapboxgl-ctrl-geocoder--input').length === 0) {
+			geocoder.addTo('#geocoder');
+			$('.mapboxgl-ctrl-geocoder--input').attr('value', '{{place}}');
+			$('.mapboxgl-ctrl-geocoder--input').attr('name', 'place');
 		}
 
-		
-		function buildLocationList(data) {
-			data.features.forEach(function(house, i){
-				var prop = house.properties;
-				// console.log(house);
-				// console.log(prop);
-				// console.log($('#'+'house-'+prop.id+'').attr('id'));
-				var house_link = document.getElementById('house-' + prop.id);
-				// console.log(house_link);
 
-				house_link.addEventListener('mouseover', function(e){
-					
-					for (var i=0; i < data.features.length; i++) {
-					if (this.id === 'house-'+data.features[i].properties.id) {
-						
-					var clickedListing = data.features[i];
-					flyToStore(clickedListing);
-					createPopUp(clickedListing);
-					}
-				}
-				var activeItem = document.getElementsByClassName('active');
-				if (activeItem[0]) {
-					activeItem[0].classList.remove('active');
-				}
-				this.parentNode.classList.add('active');
-	 			});
+		try {
+			var houses = JSON.parse("{{house|escapejs}}");
+			addMark(houses);
+		} catch{
+			var houses = undefined;
+			mapboxgl.accessToken = '{{PUB_KEY}}';
+			var map = new mapboxgl.Map({
+				container: 'map',
+				style: 'mapbox://styles/mapbox/streets-v11',
+				// center:[76.49, 11.83],
+				center: [20.977185, 52.234062],
+				zoom: 10
 			});
-    	}
+			map.scrollZoom.disable();
+		}
+		retHouse = function(houses){
+			addMark(houses);
+		}
+		var cord = '{{cord}}';
+		function addMark(houses){
 
+			mapboxgl.accessToken = '{{PUB_KEY}}';
+			var map = new mapboxgl.Map({
+				container: 'map',
+				style: 'mapbox://styles/mapbox/streets-v11',
+				// center:[76.49, 11.83],
+				center: [20.977185, 52.234062],
+				zoom: 10
+			});
+			map.scrollZoom.disable();
+			
+			if (houses && houses.features) {
+				// houses.features.forEach(function(house, i){
+				// 	house.properties.id=i;
+				// });
 
-		map.on('click', function(e) {
-				/* Determine if a feature in the "locations" layer exists at that point. */ 
-				var features = map.queryRenderedFeatures(e.point, {
-				layers: ['locations']
+				
+				map.on('load', function (e) {
+					map.addSource("places", {
+						"type": "geojson",
+						"data": houses
+					});
+
+					buildLocationList(houses);
+					addMarkers();
+
 				});
 
-				/* If yes, then: */
-				if (features.length) {
+
+				function addMarkers() {
+					houses.features.forEach(function (marker) {
+						// create a DOM element for the marker
+						var el = document.createElement('div');
+						el.id = "marker-" + marker.properties.id;
+						el.className = 'marker';
+						el.style.backgroundImage = 'url(/static/img/house-marker.png)';
+
+						// add marker to map
+						new mapboxgl.Marker(el, { offset: [0, -23] })
+							.setLngLat(marker.geometry.coordinates)
+							.addTo(map);
+
+						el.addEventListener('click', function (e) {
+							/* Fly to the point */
+							flyToStore(marker);
+							/* Close all other popups and display popup for clicked store */
+							createPopUp(marker);
+							/* Highlight listing in sidebar */
+							var activeItem = document.getElementsByClassName('active');
+							e.stopPropagation();
+							if (activeItem[0]) {
+								activeItem[0].classList.remove('active');
+							}
+							var house = document.getElementById('house-' + marker.properties.id);
+							house.classList.add('active');
+						});
+					});
+				}
+
+
+				function buildLocationList(data) {
+					data.features.forEach(function (house, i) {
+						var prop = house.properties;
+						var house_link = document.getElementById('house-' + prop.id);
+						house_link.addEventListener('mouseover', function (e) {
+
+							for (var i = 0; i < data.features.length; i++) {
+								if (this.id === 'house-' + data.features[i].properties.id) {
+
+									var clickedListing = data.features[i];
+									flyToStore(clickedListing);
+									createPopUp(clickedListing);
+								}
+							}
+							var activeItem = document.getElementsByClassName('active');
+							if (activeItem[0]) {
+								activeItem[0].classList.remove('active');
+							}
+							this.parentNode.classList.add('active');
+						});
+					});
+				}
+			}
+		
+
+
+		map.on('click', function (e) {
+			/* Determine if a feature in the "locations" layer exists at that point. */
+			var features = map.queryRenderedFeatures(e.point, {
+				layers: ['locations']
+			});
+
+			/* If yes, then: */
+			if (features.length) {
 				var clickedPoint = features[0];
 
 				/* Fly to the point */
@@ -223,48 +288,47 @@
 				/* Highlight listing in sidebar (and remove highlight for all other listings) */
 				var activeItem = document.getElementsByClassName('active');
 				if (activeItem[0]) {
-				  activeItem[0].classList.remove('active');
+					activeItem[0].classList.remove('active');
 				}
 				var listing = document.getElementById('listing-' + clickedPoint.properties.id);
 				listing.classList.add('active');
-				}else{
-					var popUps = document.getElementsByClassName('mapboxgl-popup');
-					if(popUps[0]){
-						popUps[0].remove();
-					}
+			} else {
+				var popUps = document.getElementsByClassName('mapboxgl-popup');
+				if (popUps[0]) {
+					popUps[0].remove();
 				}
+			}
 		});
 
 
-		      /**
-       * Use Mapbox GL JS's `flyTo` to move the camera smoothly
-       * a given center point.
-      **/
-	function flyToStore(currentFeature) {
-		map.flyTo({
-		center: currentFeature.geometry.coordinates,
-		zoom: 10
-		});
-	}
-
-      /**
-       * Create a Mapbox GL JS `Popup`.
-      **/
-	function createPopUp(currentFeature) {
-		var popUps = document.getElementsByClassName('mapboxgl-popup');
-		console.log(popUps[0]);
-		if(popUps[0]){
-			popUps[0].remove();
+		/**
+	 * Use Mapbox GL JS's `flyTo` to move the camera smoothly
+	 * a given center point.
+	 **/
+		function flyToStore(currentFeature) {
+			map.flyTo({
+				center: currentFeature.geometry.coordinates,
+				zoom: 10
+			});
 		}
-		var popup = new mapboxgl.Popup({closeOnClick: false})
-		.setLngLat(currentFeature.geometry.coordinates)
-		.setHTML('<h3>#'+currentFeature.properties.house_no+'</h3>' +
-		'<h4>' + currentFeature.properties.street_address +','+currentFeature.properties.postalCode+','+currentFeature.properties.city+'</h4>')
-		.addTo(map);
-	}
+
+		/**
+		 * Create a Mapbox GL JS `Popup`.
+		 **/
+		function createPopUp(currentFeature) {
+			var popUps = document.getElementsByClassName('mapboxgl-popup');
+			if (popUps[0]) {
+				popUps[0].remove();
+			}
+			var popup = new mapboxgl.Popup({ closeOnClick: false })
+				.setLngLat(currentFeature.geometry.coordinates)
+				.setHTML('<h3 class="is-size-3 has-text-primary"><i class="fa fa-eur"></i>' + currentFeature.properties.rent + '</h3>' +
+					'<h4>' + currentFeature.properties.street_address + ',' + currentFeature.properties.postalCode + ',' + currentFeature.properties.city + '</h4>')
+				.addTo(map);
+		}
 	}
 
-});	
+	});	
 </script>
 
 {% endblock %}

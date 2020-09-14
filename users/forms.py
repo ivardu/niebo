@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from users.models import UserType, CHOICES
+from users.models import UserType, CHOICES, ContactDetails
 
 
 class UserTypeForm(forms.ModelForm):
@@ -22,3 +22,10 @@ class UserForm(forms.ModelForm):
 		exclude = ['password', 'last_login','is_superuser','is_staff','user_permissions','groups','date_joined', 'is_active']
 
 
+
+class UpdatePhoneNo(forms.ModelForm):
+	phone_no = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'input'}))
+
+	class Meta:
+		model = ContactDetails
+		fields = ['phone_no']

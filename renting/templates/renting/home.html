@@ -1,7 +1,41 @@
 {% extends 'users/base.html' %}
 {% load static %}
 {% block navbar %}
-{% if user.is_authenticated %}
+{% if logged %}
+	{% if ut == 'owner' %}
+	    <div class="navbar-start">
+		    <a class="navbar-item" href="{% url 'renting:home' %}">
+		        Home
+		    </a>
+		    <a class="navbar-item" href="{% url 'renting:rent_ad_list' %}">
+		        My Rent Ads
+		    </a>
+	    </div>
+ 	    <div id="dd-ll" class="navbar-item has-dropdown is-hoverable">
+	        <a class="navbar-link">
+	         LandLord
+	        </a>
+			
+	        <div class="navbar-dropdown">
+	          <a class="navbar-item" id='tt'>
+	           Tenant
+	          </a>
+	        </div>
+	    </div> 
+	{% elif ut == 'tenant' %}
+	    <div class="navbar-end">
+		    <div id="dd-tt" class="navbar-item has-dropdown is-hoverable">
+		        <a class="navbar-link">
+		        Tenant
+		        </a>
+		        <div class="navbar-dropdown">
+			        <a class="navbar-item" id='ll'>
+			         LandLord
+			        </a>
+		        </div>
+		    </div> 
+	    </div>
+	{% endif %}
 {% else %}
 <div class="navbar-item">
 	<h6 class="title wlc-title">You are few steps away to pick your desired home or post the rent ad without any charges. Welcome to Niebo..!!</h6>
@@ -9,7 +43,9 @@
 {% endif %}
 {% endblock navbar %}
 {% block body %}
+
 <div class="container">
+
 	<!-- <div> -->
 		<!-- <h6 class="title">Welcome to the paradise..!!</h6> -->
 	<!-- </div> -->
@@ -25,16 +61,31 @@
 		</div>
 	</div>
 	<div class="columns mt-1 is-centered" id='hm-h-t-div'>
-		<div class="column is-one-third">
-			<button id='tenet' class="button is-medium is-fullwidth is-warning">I'm a Tenant</button>
-		</div>
-		<div class="column is-one-third">
-			{% if user.is_authenticated %}
-			<a id='otner' class="button is-medium is-fullwidth is-warning" href="{% url 'renting:post_rent_ad' %}">I'm a House Owner</a>
-			{% else %}
-			<button id='owner' class="button is-medium is-fullwidth is-warning">I'm a House Owner</button>
-			{% endif %}
-		</div>
+		{% if logged and ut == 'tenant'%}
+			<div class="column is-one-third">
+				<button id='tenet' class="button is-medium is-fullwidth is-warning">I'm a Tenant</button>
+			</div>
+			<div class="column is-one-third">
+				<a id='otner' class="button is-medium is-fullwidth is-light" href="{% url 'renting:post_rent_ad' %}">I'm a 
+				House Owner</a>
+			</div>
+		{% elif logged and ut == 'owner'%}
+			<div class="column is-one-third">
+					<button id='tenet' class="button is-medium is-fullwidth is-light">I'm a Tenant</button>
+			</div>
+			<div class="column is-one-third">
+				<a id='otner' class="button is-medium is-fullwidth is-warning" href="{% url 'renting:post_rent_ad' %}">I'm a 
+					House Owner</a>
+			</div>
+		{% else %}
+			<div class="column is-one-third">
+				<button id='tenet' class="button is-medium is-fullwidth is-warning">I'm a Tenant</button>
+			</div>
+			<div class="column is-one-third">
+				<a id='owner' class="button is-medium is-fullwidth is-warning" >I'm a 
+				House Owner</a>
+			</div>
+		{% endif %}
 	</div>
 	<div class="columns is-multiline" id='srch-bar'>
 		<div class="column pd-geo">
@@ -49,10 +100,10 @@
 	  					<div class="column">
 	  						<div class="columns">
 			  					<div class="column">
-			  						<input type="date" id='datepickerDemoRange' class='input dd has-background-white-bis'>
+			  						<input type="date" id='datepickerDemoRange' class='input dd has-background-white-bis' name='in_date'>
 			  					</div>
 			  					<div class="column">
-			  						<input type="date" allowSameDayRange='false' class='dd has-background-white-bis' displayMode="inline"  isRange='true'>
+			  						<input type="date" allowSameDayRange='false' class='dd has-background-white-bis' displayMode="inline" name='out_date'>
 			  					</div>
 			  					<div class="column">
 			  						<input id='rt-srch' class="button is-danger is-rounded" type="submit" name="Search" value="Search">

@@ -10,10 +10,11 @@
 		</div>
 	</div>
 	<div class="columns is-centered" id='sec_on'>
-		<div class="column is-half">
+		<div class="column is-one-third">
 			<form method="post" enctype="multipart/form-data">
 				{% csrf_token %}
 				{{form}}
+				{{pform}}
 				<div class="columns is-centered" id='ip-bt'>
 					<button class="button is-warning" type="submit" name="update">Update</button>
 				</div>
@@ -21,8 +22,8 @@
 		</div>
 	</div>
 	<div class="columns is-centered" id='sec_two'>
-		<div class="column is-two-third">
-			<a class="button is-danger" href="{% url 'users:del_acc' %}">Delete My Account</a>
+		<div class="column is-one-fifth fl">
+			<h3 class="subtitle is-6 hl">I Want to</h3><a class="button is-danger" href="{% url 'users:del_acc' %}">Delete My Account</a>
 		</div>
 		
 	</div>
@@ -33,6 +34,7 @@ $(function(){
 	$('#ac-set').on('click',function(){
 		$('#sec_on').hide();
 		$('#sec_two').show();
+		$('#sec_two').css('display','flex');
 	})
 	$('#per-set').on('click',function(){
 		$('#sec_two').hide();

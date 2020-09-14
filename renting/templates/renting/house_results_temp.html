@@ -1,0 +1,44 @@
+<div class="columns is-multiline" id="rhd-plc">
+    {% if houses_list|length > 0 %}
+        {% for house,bed in houses_list.items %}
+        <div class="column is-half box hsrs" id="house-{{house.id}}">
+            <div class="level">
+                <div class="left"><p class="ncr title is-size-5"><i class="fa fa-eur"></i> {{house.rent}} Monthly</p></div>
+                <div class="right"><p class="ncr title is-size-5">{{bed}}</p></div>
+            </div>
+            <p class="ncr subtitle is-6">{{house.street_address}}, {{house.zipcode}}, {{house.city}},
+            {{house.country}}</p>
+
+            <!-- <p class="subtitle is-6">{{house.street_address}},</p>
+            <p class="subtitle is-6">{{house.zipcode}}, {{house.city}}</p>
+            <p class="subtitle is-6">{{house.country}}</p> -->
+            <a href="{% url 'renting:house_details' house.id %}?next={{request.path}}">
+
+                {% if house.houseimages_set.all %}
+                {% for img in house.houseimages_set.all %}
+                    {% if forloop.counter == 1 %}
+                        <img class="img-cls" src="{{img.images.url}}">
+                    {% endif %}
+                {% empty %}
+                <div class="columns is-centered">
+                        <i class="fa fa-picture-o fa-10x has-text-grey-light" aria-hidden="true"></i>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </a>
+                
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="box column is-full resul-txt">Sorry..!! Results not found for the city you are looking for.. try for other city</div>
+    {% endif %}
+</div>
+<script type="text/javascript">
+    try{
+        var houses = JSON.parse("{{house|escapejs}}");
+        retHouse(houses);
+    }catch{
+        var houses = undefined;
+    }
+    
+</script>

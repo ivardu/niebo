@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date
 
 # Create your models here.
 
@@ -67,8 +68,12 @@ class NewRentalHouse(models.Model):
 
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+	in_date = models.DateField()
+	out_date = models.DateField()
+	rent = models.PositiveIntegerField(default=100)
+
 class HouseImages(models.Model):
-	images = models.ImageField(upload_to=house_images, blank=True, null=True)
+	images = models.ImageField(upload_to=house_images, blank=True)
 	nrh = models.ForeignKey(NewRentalHouse, on_delete=models.CASCADE)
 
 
@@ -87,7 +92,7 @@ class HouseHas(models.Model):
 	parking = models.CharField(max_length=2, choices=FIELD_CHOICES)
 	wheelchair_accessible = models.CharField(max_length=2, choices=FIELD_CHOICES)
 
-	nrh = models.ForeignKey(NewRentalHouse, on_delete=models.CASCADE) 
+	nrh = models.OneToOneField(NewRentalHouse, on_delete=models.CASCADE) 
 
 
 class Amenities(models.Model):
@@ -105,7 +110,7 @@ class Amenities(models.Model):
 	bed = models.CharField(max_length=1, choices=FIELD_CHOICES)
 	furnished = models.CharField(max_length=1, choices=FIELD_CHOICES)
 
-	nrh = models.ForeignKey(NewRentalHouse, on_delete=models.CASCADE)
+	nrh = models.OneToOneField(NewRentalHouse, on_delete=models.CASCADE)
 
 
 class PreferredTenant(models.Model):
@@ -113,7 +118,7 @@ class PreferredTenant(models.Model):
 	couple_friendly = models.CharField(max_length=1, choices=FIELD_CHOICES)
 	bachelor_allowed = models.CharField(max_length=1, choices=FIELD_CHOICES)
 
-	nrh = models.ForeignKey(NewRentalHouse, on_delete=models.CASCADE)
+	nrh = models.OneToOneField(NewRentalHouse, on_delete=models.CASCADE)
 
 
 class Rules(models.Model):
@@ -121,7 +126,10 @@ class Rules(models.Model):
 	smoking_allowed = models.CharField(max_length=1, choices=FIELD_CHOICES)
 	musical_instrument = models.CharField(max_length=1, choices=FIELD_CHOICES)
 
-	nrh = models.ForeignKey(NewRentalHouse, on_delete=models.CASCADE)
+	nrh = models.OneToOneField(NewRentalHouse, on_delete=models.CASCADE)
+
+	# class Meta:
+	# 	unique_together = ()
 
 
 

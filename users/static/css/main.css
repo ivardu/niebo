@@ -248,10 +248,16 @@ img.img-cls{
 	height: 60vh;
 }
 
-.til{
-	/*background-color: #f0f0f0;*/
-	/*padding: 0.2rem;*/
+.hs-img-n{
+	width: 80vw;
+	height: 50vh;
 }
+
+/* .til{
+	background-color: #f0f0f0;*/
+	/*padding: 0.2rem;
+} 
+*/
 .resul-txt{
 	font-size: 2rem;
 }
@@ -270,7 +276,7 @@ img.img-cls{
 	height: 10rem;
 	transform: scale(1);
 }
-.img-div{
+.img-div, .hurs{
 	position: relative;
 }
 
@@ -285,21 +291,38 @@ img.img-cls{
 	bottom: 0rem;
 	right: 0rem;
 	left: 0rem;
-	height: 100%
-	weight: 100%;
+	height: 100%;
+	width: 100%;
 	z-index: 10;
 	color: #000;
 	/*opacity: 1;*/
 	/*box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);*/
 }
+.del-ovr{
+	position: absolute;
+	cursor: pointer;
+	bottom: 0rem;
+	z-index: 10;
+	color: #000;
+	width: 95%;
+	height: 30%;
+	/* left: 0rem; */
+	/* right: 0rem; */
 
+	/*opacity: 1;*/
+	/*box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);*/
+}
+.del-ovr.left,.del-ovr.right{
+	padding: 0.5rem;
+}
 .fa-times-circle:hover{
 	box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.1),0 0 0 1px rgba(10,10,10,.02);
 	color: #ef0808;
 }
 .fa-times-circle{
 	position: absolute;
-	color: #000;
+	color: red;
+	/* background-color: #ccc; */
 	opacity: 1;
 	top: 50%;
 	left: 50%;
@@ -308,16 +331,15 @@ img.img-cls{
   	text-align: center;
 }
 
-/*.fa-times-circle:active{
-	transform: scale(0.98);
-}*/
 
 #sec_on{
 	/*display: none;*/
+	height: 45vh;
 }
 
 #sec_two{
 	display: none;
+	height: 48vh;
 }
 
 .set-hd{
@@ -341,5 +363,56 @@ img.img-cls{
 }
 
 #hm-h-t-div{
-	height: 30vh;
+	height: 40vh;
+}
+.column.fl{
+	min-height: 5rem;
+	margin-top: 1rem;
+	/*min-width: 10rem;*/
+	display: flex;
+}
+
+.hl{
+	margin-top: 0.5rem;
+    min-width: 5rem;
+    padding-left: 0.3rem;
+    text-decoration: underline;
+}
+
+.brdr{
+	box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.02)
+}
+
+#srt{
+   position: relative;
+}
+.srtul{
+	position: absolute;
+    top: 3rem;
+    background-color: white;
+	/* padding: 0.5rem; */
+	box-shadow:1px 4px 6px -1px grey;
+}
+li.srtli{
+	cursor: pointer;
+	padding:0.5rem;
+}
+
+.srtli:hover{
+	/* background-color: turquoise; */
+	background-color:#f1efef;
+
+}
+
+.bhk{
+	min-width: 7rem;
+	width: 7rem;
+}
+.st{
+	padding-right: 0.5em;
+}
+
+select option{
+	background-color: white;
+	box-shadow: 1px 4px 6px -1px grey;
 }

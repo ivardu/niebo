@@ -4,14 +4,28 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.template.loader import render_to_string
 
 from .forms import SearchForm, RentalHouseForm, HouseHasForm, AmenitiesForm, RulesForm, PreferredTenantForm, HouseImagesForm, HouseImagesEditForm
 from .models import NewRentalHouse, HouseHas, Amenities, PreferredTenant, Rules, HouseImages
+from users.models import UserType
+from users.forms import UserTypeForm
+
 import requests, pgeocode, pandas, json
+from datetime import datetime
 
 # url = reverse_lazy('renting:house_amenities')
 
 def home_page(request):
+	# User logged in or not
+	if request.user.is_authenticated:
+		logged = True
+
+		#Getting the logged on user type 
+		try:
+			ut = request.user.ut.user_type	
+		except:
+			ut = None	
 
 	form = SearchForm()
 	log = 'false'
@@ -26,7 +40,6 @@ def user_signin_status(request):
 		return JsonResponse({'user':'not_logged_in'})
 
 
-
 def renting_house_results(request):
 	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
 	if request.method == 'POST':
@@ -34,14 +47,58 @@ def renting_house_results(request):
 		url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/'+place+'.json?access_token=pk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYm80c2E5NjFnemcycXM0YXE3cTZmaWwifQ.RUzXxKHAH_vuUSs0hc4t7g&limit=1'
 		response = requests.get(url)
 		json_resp = response.json()
-		cord = json_resp['features'][0]['center']
-		cord = str(cord[0])+','+str(cord[1])
-		request.session['cord'] = cord
-		place_name = (json_resp['features'][0]['place_name']).split(',')[0]
+	
+		try:
+			place_name = (json_resp['features'][0]['place_name']).split(',')[0]
+			cord = json_resp['features'][0]['center']
+			cord = str(cord[0])+','+str(cord[1])
+			request.session['cord'] = cord
 
-		house_list = NewRentalHouse.objects.filter(city=place_name)
+		except:
+			place_name = None
+
+		try:
+			sort_by = request.POST['sort_by']
+			# print(sort_by)
+		except:
+			sort_by = None
+
+		try:
+			bhk = request.POST['bhk']
+			# print(sort_by)
+		except:
+			bhk = 'bhk'
+		
+		try:
+			in_date = request.POST['in_date']
+			out_date = request.POST['out_date']
+			in_d = datetime.strptime(in_date, '%m/%d/%Y')
+			ot_d = datetime.strptime(out_date, '%m/%d/%Y')
+
+		except:	
+			in_d = in_date = datetime.today()
+			ot_d = out_date = datetime.today()
+
+
+		if place_name and sort_by:
+			if sort_by == 'Ascending':
+				house_list = NewRentalHouse.objects.filter(city=place_name, in_date__lte=in_d, out_date__gte=ot_d).order_by('rent')
+				# print(house_list)
+			elif sort_by == 'Descending':
+				# print(sort_by)
+				house_list = NewRentalHouse.objects.filter(city=place_name, in_date__lte=in_d, out_date__gte=ot_d).order_by('-rent')				
+
+		elif in_date and out_date and place_name:	
+			house_list = NewRentalHouse.objects.filter(city=place_name, in_date__lte=in_d, out_date__gte=ot_d)
+
 		features = []
-		houses_list = []
+		houses_list = {}
+		bhks = {
+			'one':1,'two':2,'three':3,'three_plus':'3+','zero':0
+		}
+		bhkk = {
+			'0BHK':'zero','1BHK':'one','2BHK':'two','3BHK':'three','3+BHK':'three_plus'
+		}
 				
 
 		if house_list:
@@ -72,20 +129,25 @@ def renting_house_results(request):
 					        "postalCode": hous_obj.zipcode,
 					        "city": hous_obj.city,
 					        "country": hous_obj.country,
+							"rent":hous_obj.rent,
 					      }
 					    }
-					# house = {
-					# 	'house_no':hous_obj.house_no,
-					# 	'street_address':hous_obj.street_address,
-					# 	'zipcode':hous_obj.zipcode,
-					# 	'city':hous_obj.city,
-					# 	'country':hous_obj.country,
-					# 	'id':hous_obj.id
-					# }
+					bed = hous_obj.househas.bedroom
+					if bhk != 'bhk':
+						def verify(bed, bhk):
+							if bhkk[bhk] == bed:
+								houses_list.update({hous_obj:bhk})
+								features.append(item)
+						verify(bed, bhk)
+
+					else:				
+						houses_list.update({hous_obj:str(bhks[bed])+'BHK'})
+						features.append(item)
 
 
-					features.append(item)
-					houses_list.append(hous_obj)
+					# features.append(item)
+					
+					# print(houses_list)
 					
 
 			house = {
@@ -93,6 +155,11 @@ def renting_house_results(request):
 				"features":features
 	  		}
 			house = json.dumps(house, cls=DjangoJSONEncoder)
+			print(house, houses_list)
+			# Handling Ajax Post Requests
+			if request.is_ajax():
+				return render(request, 'renting/house_results_temp.html', locals())
+
 
 		else:
 			# print('Else is executing')
@@ -102,17 +169,12 @@ def renting_house_results(request):
 	  		}
 			house = json.dumps(house, cls=DjangoJSONEncoder)
 			
-			# return HttpResponseRedirect(reverse('renting:disp'))
-			return render(request, 'renting/renting_house_results.html', locals())
 
-
+	# Handling the Get Request for House Results disp view
 	else:
 		cord = request.session.get('cord', '21.01,52.22')
 
-	
 	return render(request,'renting/renting_house_results.html', locals())
-
-	# return HttpResponse(request.POST['place'])
 
 
 # Make it as only post
@@ -121,15 +183,12 @@ def post_rent_ad(request):
 	# print(request.FILES or None)
 	form = RentalHouseForm(initial={'country':'Poland'}, data=request.POST or None)
 	img_form = HouseImagesForm(files=request.FILES)
-
 	PUB_KEY = settings.MAPBOX_PUBLIC_KEY
 	if request.method == 'POST' and request.user.is_authenticated:
 		if form.is_valid():
 			rh_obj = form.save(commit=False)
-			# print(request.user)
 			rh_obj.user = request.user
 			rh_obj.save()
-			print(request.FILES.getlist('images'))
 			if img_form.is_valid():
 				for img_file in request.FILES.getlist('images'):
 					HouseImages.objects.create(images=img_file, nrh=rh_obj)
@@ -140,8 +199,6 @@ def post_rent_ad(request):
 				'id': rh_obj.id}
 
 			return JsonResponse(data)
-
-######### You Need to Handle the Form Errors Too ########### 
 
 		else:
 			form_errors = form.errors.items()
@@ -154,15 +211,32 @@ def post_rent_ad(request):
 						data.update({field:value[0]})
 					else:
 						data.update({field:value[0]})
-			# data.update({"success":False})
-			# print(data)
 			return JsonResponse(data, status=409)
 
+	# GET Request
 	elif request.user.is_anonymous:
 		modl = 'true'
 		return render(request, 'renting/rental_post.html', locals())
 
+	# GET Request
 	elif request.user.is_authenticated:
+		# Saving the User_type
+		try:
+			ut = UserType.objects.get(user=request.user)
+			ut_form = UserTypeForm(data={'user_type':'owner'},instance=ut)
+		except:
+			ut = None
+
+		if ut:
+			if ut_form.is_valid():
+				ut_form.save()
+		else:
+			ut_form = UserTypeForm(data={'user_type':'owner'})
+			if ut_form.is_valid():
+				ut_obj = ut_form.save(commit=False)
+				ut_obj.user = request.user
+				ut_obj.save()
+
 		return render(request, 'renting/rental_post.html', locals())
 
 
@@ -171,37 +245,39 @@ def post_rent_ad(request):
 def update_rent_ad(request, id):
 	if request.user.is_authenticated:
 		try:
+			print(request.POST)
 			rh_obj = NewRentalHouse.objects.get(pk=id)
 			form = RentalHouseForm(data=request.POST or None, instance=rh_obj)
-			img_form = HouseImagesForm(files=request.FILES)
+			img_form = HouseImagesEditForm(files=request.FILES)
+			print(form, img_form)
 		except:
 			rh_obj = None
 
 		if request.method == 'POST' and rh_obj:
 			if form.is_valid():
 				nrh_obj = form.save()
+				print(nrh_obj, img_form)
 				if img_form.is_valid():
-					img_obj = img_form.save(commit=False)
-					img_obj.nrh = rh_obj
-					img_obj.save()
-
+					print(img_form)
+					for img_file in request.FILES.getlist('images'):
+						HouseImages.objects.create(images=img_file, nrh=nrh_obj)
 				else:
 					print(img_form.errors)
-				
-				data = {'url':reverse_lazy('renting:house_amenities'),
-					'id': nrh_obj.id}
-
-				return JsonResponse(data)
-
-	######### You Need to Handle the Form Errors Too ########### 
 
 			else:
-				# print(form.errors)
-				# print('errors')
+				print(form.errors)
+				# print('what else', form)
 				data = {
 				 'error':'check djangoconsole'
 				}
 				return JsonResponse(data, status=404)
+
+			data = {'url':reverse_lazy('renting:house_amenities'),
+				'id': nrh_obj.id}
+
+			return JsonResponse(data)
+		else:
+			print(rh_obj)
 
 	elif request.user.is_anonymous:
 		modl='true'
@@ -445,7 +521,7 @@ def delete_whole(request, id):
 
 		if nrh_obj:
 			nrh_obj.delete()
-			return HttpResponseRedirect(reverse('renting:post_rent_ad'))
+			return HttpResponseRedirect(reverse('renting:rent_ad_list'))
 
 		# Need to handle the error for exception - object doesn't exists
 
@@ -507,26 +583,31 @@ def house_details(request, id):
 
 
 def rent_ads(request):
-	house_list = NewRentalHouse.objects.filter(user=request.user)
-	houses_list = []
-	edit_list = []
-	for hous_obj in house_list:
-		try:
-			rl = Rules.objects.get(nrh=hous_obj)
-			pt = PreferredTenant.objects.get(nrh=hous_obj)
-			am = Amenities.objects.get(nrh=hous_obj)
-			hh = HouseHas.objects.get(nrh=hous_obj)
-			proceed = True
-		except:
-			proceed = False
+	if request.user.is_authenticated:
+		house_list = NewRentalHouse.objects.filter(user=request.user)
+		houses_list = []
+		edit_list = []
+		for hous_obj in house_list:
+			try:
+				rl = Rules.objects.get(nrh=hous_obj)
+				pt = PreferredTenant.objects.get(nrh=hous_obj)
+				am = Amenities.objects.get(nrh=hous_obj)
+				hh = HouseHas.objects.get(nrh=hous_obj)
+				proceed = True
+			except:
+				proceed = False
 
-		if proceed:
-			houses_list.append(hous_obj)
-		else:
-			edit_list.append(hous_obj)
+			if proceed:
+				houses_list.append(hous_obj)
+			else:
+				edit_list.append(hous_obj)
 
 
-	return render(request, 'renting/ads_list.html', locals())
+		return render(request, 'renting/ads_list.html', locals())
+
+	elif request.user.is_anonymous:
+		modl='true'
+		return render(request, 'renting/house_detail.html', locals())
 
 
 def del_house_image(request,id):

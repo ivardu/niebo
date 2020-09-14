@@ -4,7 +4,7 @@
 <head>
 	<title>Niebo</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
+	<link rel="icon" href="{%static 'img/favicon.ico' %}" type="image/x-icon"/>
    	<!-- MapBox GL - CSS -->
 	<link href='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css' rel='stylesheet' />
 	<link
@@ -34,6 +34,16 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://kit.fontawesome.com/0d12e37eba.js" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/js/bulma-carousel.min.js"></script>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-177958902-1"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'UA-177958902-1');
+	</script>
+
 
 </head>
 <body id='mn-bd' class="has-navbar-fixed-top">
@@ -116,27 +126,41 @@
 
 		  <div id="navbarBasicExample" class="navbar-menu">
 		  	{% block navbar %}
-		    <div class="navbar-start">
-		    	
-		      <a class="navbar-item">
-		        Home
-		      </a>
-		      <a class="navbar-item" href="{% url 'renting:rent_ad_list' %}">
-		        My Rent Ads
-		      </a>
-		    </div>
-	 	      <div class="navbar-item has-dropdown is-hoverable">
-		        <a class="navbar-link">
-		          LandLord
-		        </a>
-				
-		        <div class="navbar-dropdown">
-		          <a class="navbar-item">
-		            Tenant
-		          </a>
-		        </div>
-		    </div> 
-		       {% endblock navbar%}
+			  	{% if user.ut.user_type == 'owner' %}
+			    <div class="navbar-start">
+				    <a class="navbar-item" href="{% url 'renting:home' %}">
+				        Home
+				    </a>
+				    <a class="navbar-item" href="{% url 'renting:rent_ad_list' %}">
+				        My Rent Ads
+				    </a>
+			    </div>
+		 	    <div id="dd-ll" class="navbar-item has-dropdown is-hoverable">
+			        <a class="navbar-link">
+			          LandLord
+			        </a>
+					
+			        <div class="navbar-dropdown">
+			          <a class="navbar-item" id='tt'>
+			            Tenant
+			          </a>
+			        </div>
+			    </div> 
+			    {% elif user.ut.user_type == 'tenant' %}
+				<div class="navbar-end">
+				    <div id="dd-tt" class="navbar-item has-dropdown is-hoverable">
+				        <a class="navbar-link">
+				        Tenant
+				        </a>
+				        <div class="navbar-dropdown">
+					        <a class="navbar-item" id='ll'>
+					        LandLord
+					        </a>
+				        </div>
+				    </div> 
+			    </div>
+			    {% endif %}
+		      {% endblock navbar%}
 		    </div>
 
 		    <div class="navbar-end nb-end">
@@ -174,9 +198,9 @@
 			{% endblock carousel %}
 		<div class="hero-body ">
 			<!-- <div class="container" id='bdy-ma'> -->
-				{% block body %}
+			{% block body %}
 
-				{% endblock %}
+			{% endblock %}
 			<!-- </div> -->
 		</div>
 		<div class="hero-foot">
@@ -239,25 +263,25 @@
 			});
 
 			// Loop on each calendar initialized
-			calendars.forEach(calendar => {
-				// Add listener to date:selected event
-				calendar.on('date:selected', date => {
-					console.log(date);
-				});
-			});
+			// calendars.forEach(calendar => {
+			// 	// Add listener to date:selected event
+			// 	calendar.on('date:selected', date => {
+			// 		// console.log(date);
+			// 	});
+			// });
 
-			// To access to bulmaCalendar instance of an element
-			const element = document.querySelector('.dd');
-			// console.log(element, 'noelement');
-			if (element) {
-				// bulmaCalendar instance is available as element.bulmaCalendar
-				// console.log(element.);
+			// // To access to bulmaCalendar instance of an element
+			// const element = document.querySelector('.dd');
+			// // console.log(element, 'noelement');
+			// if (element) {
+			// 	// bulmaCalendar instance is available as element.bulmaCalendar
+			// 	// console.log(element.);
 
-				element.bulmaCalendar.on('select', datepicker => {
-					console.log(datepicker.isStartDate);
-					// console.log(datepicker.data.value());
-				});
-			}
+			// 	element.bulmaCalendar.on('select', datepicker => {
+			// 		// console.log(datepicker.isStartDate);
+			// 		// console.log(datepicker.data.value());
+			// 	});
+			// }
 
 			$(function(){
 			$(".datetimepicker-dummy-input").click(function() {
@@ -271,6 +295,8 @@
 				// body...
 				event.preventDefault();
 			});
+
+			// Avoding rental search without empty values
 			$('#rental-search').on('submit', function(event){
 				var res = false
 				$('.datetimepicker-dummy-input').each(function(){

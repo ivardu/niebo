@@ -1,4 +1,6 @@
 {% extends 'users/base.html' %}
+{% block footer %}
+{% endblock footer %}
 {% block body %}
 <div class="container">
 	<div class="modal" id='del-cncl'>
@@ -106,6 +108,36 @@
 					</div>
 				</div>
 				<div class="columns">
+					<div class="column" id='avl'>
+						<h5><small>Availability of house</small></h5>
+					</div>
+					<div class="column ">
+						{{form.rent.errors}}
+						{{form.rent.label}}
+						<div class="control has-icons-left">
+						{{form.rent}}
+						  <span class="icon is-left">
+						    <i class="fa fa-eur"></i>
+						  </span>
+						</div>
+					</div>
+				</div>
+				<div class="columns brdr">
+					<div class="column">
+						{{form.in_date.errors}}
+						{{form.in_date.label}}
+						{{form.in_date}}
+					</div>
+					<div class="column">
+						{{form.out_date.errors}}
+						{{form.out_date.label}}
+						{{form.out_date}}
+					</div>
+				</div>
+				<div class="columns" id='imgprev'>
+
+				</div>
+				<div class="columns">
 					<div class="column">
 						<div class="field">
 							<div class="file is-info has-name" id='file-js-example'>
@@ -116,7 +148,7 @@
 								          <i class="fa fa-upload"></i>
 										</span>
 								        <span class="file-label">
-								          Upload Images…
+								          Upload House Images
 										</span>
 							    	</span>
 							    	<span class="file-name">
@@ -126,21 +158,6 @@
 						</div>
 					</div>
 				</div>
-				<script>
-				  const fileInput = document.querySelector('#file-js-example input[type=file]');
-				  fileInput.onchange = () => {
-				    if (fileInput.files.length > 0) {
-				      const fileName = document.querySelector('#file-js-example .file-name');
-				      if(fileInput.files.length == 1){
-				      	fileName.textContent = fileInput.files[0].name;	
-				      }
-				      else{
-				      	fileName.textContent = fileInput.files.length+' images';		
-				      }
-				      
-				    }
-				  }
-				</script>
 				<div class="columns is-centered" id='button_sec'>
 					<div class="column is-one-quarter">
 						<input id='house_addr_submit' class="button is-fullwidth is-small is-rounded is-success" type="submit" name="submit" value="submit">
@@ -158,7 +175,7 @@
 				</div>
 			</div>
 			<progress class="progress is-danger" max="100">80%</progress>
-			<div id='map' style='width: 40vw; height: 45vh;'></div>
+			<div id='map' style='width: 40vw; height: 70vh;'></div>
 		</div>
 	</div>
 	<div class="columns" id="second_div">
@@ -175,6 +192,50 @@
 		
 	</div>
 </div>
+<script>
+	const fileInput = document.querySelector('#file-js-example input[type=file]');
+	// fileInput.onchange = () => {
+	//   if (fileInput.files.length > 0) {
+	// 	const fileName = document.querySelector('#file-js-example .file-name');
+	// 	if(fileInput.files.length == 1){
+	// 		fileName.textContent = fileInput.files[0].name;	
+	// 	}
+	// 	else{
+	// 		fileName.textContent = fileInput.files.length+' images';		
+	// 	}
+		
+	//   }
+	// }
+	
+	$('#file-js-example input[type=file]').on('change',function(e){
+		$('#imgprev').empty();
+		var files = e.target.files;
+		var fl = files.length;
+		if(files && fl > 0){
+			const fileName = document.querySelector('#file-js-example .file-name');
+			// console.log(files[0].name, fl);
+			if(fl == 1){
+					fileName.textContent = files[0].name;	
+			}else{
+				fileName.textContent = fl+' images';		
+			}
+			for (var i=0; i<fl; i++){
+				var f = files[i];
+				var obj = $('#imgprev').append($("<img></img>",{
+					class:'imgthumb',
+					src:URL.createObjectURL(f),
+					title:f.name,
+					height:'10rem',
+					width:'10rem',
+				}));
+				$('.imgthumb').get(i).onload = function(){
+					URL.revokeObjectURL(this.src);
+				}
+			}
+		}
+	});
+
+  </script>
 <style type="text/css">
 	.geocoder {
 /*position: absolute;*/
@@ -203,7 +264,7 @@ margin-top: 1rem;
 	});
 </script>
 <script type="text/javascript">
-	$(function(){
+$(function(){
 	mapboxgl.accessToken = 
 		'pk.eyJ1IjoiaXZhcmR1IiwiYSI6ImNrYm80c2E5NjFnemcycXM0YXE3cTZmaWwifQ.RUzXxKHAH_vuUSs0hc4t7g';
 	var map = new mapboxgl.Map({
@@ -282,7 +343,13 @@ margin-top: 1rem;
 	}
 
 	
-	// console.log(url);
+	// Using the Bulma Calendar extension for dates
+
+	// Preview the images while posting the new house
+
+	
+
+	
 });
 var ha_url = "{% url 'renting:house_amenities' %}"
 </script>
