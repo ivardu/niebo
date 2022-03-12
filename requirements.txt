@@ -24,7 +24,7 @@ numpy==1.19.0
 oauthlib==3.1.0
 pandas==1.0.5
 pgeocode==0.2.1
-Pillow==7.2.0
+Pillow==9.0.1
 protobuf==3.13.0
 psycopg2==2.8.5
 pyasn1==0.4.8
